@@ -16,12 +16,13 @@ import {
   der Firebase Console hier eingesetzt.
 */
 const firebaseConfig = {
-  apiKey: "HIER_EINTRAGEN",
-  authDomain: "DEIN-PROJEKT.firebaseapp.com",
-  projectId: "DEIN-PROJEKT",
-  storageBucket: "DEIN-PROJEKT.firebasestorage.app",
-  messagingSenderId: "HIER_EINTRAGEN",
-  appId: "HIER_EINTRAGEN"
+  apiKey: "AIzaSyAI7xMbH4TqCGh1BJKyRyv_LQtqlsLUDNc",
+  authDomain: "campus-klasse.firebaseapp.com",
+  projectId: "campus-klasse",
+  storageBucket: "campus-klasse.firebasestorage.app",
+  messagingSenderId: "164958867141",
+  appId: "1:164958867141:web:676ab50f17f8a4b710eaac",
+  measurementId: "G-VYLG8YKT9E"
 };
 
 const configReady = !Object.values(firebaseConfig).some(v => String(v).includes("HIER_") || String(v).includes("DEIN-PROJEKT"));
