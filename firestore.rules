@@ -1,0 +1,73 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function own(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function teacher() {
+      return signedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'admin'];
+    }
+
+    match /users/{uid} {
+      allow create: if own(uid)
+        && request.resource.data.role == 'student'
+        && request.resource.data.uid == uid;
+
+      allow read: if own(uid) || teacher();
+
+      allow update: if own(uid)
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.role == resource.data.role;
+
+      allow delete: if teacher();
+    }
+
+    // Gemeinsame Campusdaten: nur angemeldete Mitglieder.
+    // Löschen darf nur die Lehrkraft/Admin bzw. der Ersteller des eigenen Inhalts.
+    match /tasks/{id} {
+      allow read, create: if signedIn();
+      allow update: if signedIn() && (resource.data.createdBy == request.auth.uid || teacher());
+      allow delete: if teacher() || (signedIn() && resource.data.createdBy == request.auth.uid);
+    }
+
+    match /posts/{id} {
+      allow read, create: if signedIn();
+      allow update: if signedIn() && (resource.data.authorUid == request.auth.uid || teacher());
+      allow delete: if teacher() || (signedIn() && resource.data.authorUid == request.auth.uid);
+    }
+
+    match /projects/{id} {
+      allow read, create: if signedIn();
+      allow update, delete: if teacher() || (signedIn() && resource.data.createdBy == request.auth.uid);
+    }
+
+    match /practice/{id} {
+      allow read, create: if signedIn();
+      allow update, delete: if teacher() || (signedIn() && resource.data.createdBy == request.auth.uid);
+    }
+
+    match /calendar/{id} {
+      allow read, create: if signedIn();
+      allow update, delete: if teacher() || (signedIn() && resource.data.createdBy == request.auth.uid);
+    }
+
+    match /journal/{id} {
+      allow read, create: if signedIn() && (resource == null || resource.data.uid == request.auth.uid);
+      allow update, delete: if own(resource.data.uid) || teacher();
+    }
+
+    match /competencies/{id} {
+      allow read, create: if signedIn() && (resource == null || resource.data.uid == request.auth.uid);
+      allow update, delete: if own(resource.data.uid) || teacher();
+    }
+  }
+}
