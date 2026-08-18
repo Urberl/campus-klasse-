@@ -15,3 +15,6 @@ html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);
 @media(max-width:1000px){.grid-4{grid-template-columns:repeat(2,1fr)}.brand-copy{display:none}.brand-divider{display:none}.sidebar{width:220px;flex-basis:220px}}
 @media(max-width:720px){.topbar{height:72px;padding:6px 10px}.brand img{width:195px;height:58px}.menu-btn{display:block}.user-name{display:none}.sidebar{position:fixed;left:-260px;top:72px;height:calc(100vh - 72px);z-index:40;transition:left .2s;width:250px}.sidebar.open{left:0}.app-shell{display:block}.hero{padding:18px;display:block}.hero h1{font-size:26px}.hero .actions{margin-top:14px}.page-head{display:block}.page-head h1{font-size:25px}.page-head .actions{margin-top:10px}.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}main{padding:13px 10px 35px}.toolbar{display:block}.search{width:100%;min-width:0;margin-top:8px}.post-body,.post-actions,.comments{margin-left:0}.footer{display:block;line-height:1.7}.footer span{display:block}}
 @media print{.topbar{position:static}.sidebar,.user-area,.actions,.toolbar,.footer{display:none!important}main{padding:0}.card,.hero,.forum-post{box-shadow:none}}
+[hidden] {
+  display: none !important;
+}
