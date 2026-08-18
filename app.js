@@ -86,7 +86,8 @@ function showAuth(){
 }
 function showApp(){
   $("authScreen").hidden=true;$("app").hidden=false;$("logoutBtn").hidden=false;
-  $("userName").textContent=profile?.displayName||currentUser?.email||"Campus";
+  $("userName").textContent=(profile?.displayName||currentUser?.email||"Campus") + (isTeacher() ? " · Lehrkraft" : "");
+  ensureTeacherNav();
   render();
 }
 function clearListeners(){unsubscribers.forEach(u=>u&&u());unsubscribers=[]}
@@ -122,57 +123,26 @@ $("registerTab").addEventListener("click",showRegisterForm);
 
 $("loginForm").addEventListener("submit", async e => {
   e.preventDefault();
-
-  const errorBox = $("authError");
-  errorBox.hidden = false;
-  errorBox.innerHTML = "<strong>1. Klick erkannt.</strong>";
-  console.log("AUTH TEST 1: submit erkannt");
+  $("authError").textContent = "";
 
   const email = $("loginEmail").value.trim();
   const password = $("loginPassword").value;
 
   if (!email || !password) {
-    errorBox.innerHTML = "<strong>TEST STOPP:</strong> Bitte E-Mail und Passwort eingeben.";
+    $("authError").textContent = "Bitte E-Mail-Adresse und Passwort eingeben.";
+    return;
+  }
+  if (!configReady) {
+    $("authError").textContent = "Firebase ist noch nicht konfiguriert.";
     return;
   }
 
-  errorBox.innerHTML = "<strong>2. Firebase wird geladen …</strong>";
-  console.log("AUTH TEST 2: loadFirebase");
-
   try {
     await loadFirebase();
-    errorBox.innerHTML = "<strong>3. Firebase geladen.</strong><br>Jetzt wird angemeldet …";
-    console.log("AUTH TEST 3: Firebase geladen");
-
-    const cred = await signInWithEmailAndPassword(auth, email, password);
-
-    console.log("AUTH TEST 4: LOGIN ERFOLGREICH", cred.user.uid);
-    errorBox.innerHTML =
-      "<strong style='color:green'>4. LOGIN ERFOLGREICH!</strong><br>" +
-      "Benutzer: " + esc(cred.user.email || email);
-
-    currentUser = cred.user;
-
-    try {
-      await ensureProfile(cred.user);
-      errorBox.innerHTML += "<br>Profil erfolgreich geladen.";
-    } catch (profileError) {
-      console.error("AUTH TEST Profilfehler:", profileError);
-      errorBox.innerHTML +=
-        "<br><strong>Profilfehler:</strong> " +
-        esc(profileError?.code || profileError?.message || String(profileError));
-    }
-
-    setTimeout(() => {
-      try { showApp(); } catch (e) { console.error(e); }
-    }, 500);
-
+    await signInWithEmailAndPassword(auth, email, password);
   } catch (err) {
-    console.error("AUTH TEST FEHLER:", err);
-    errorBox.innerHTML =
-      "<strong style='color:red'>LOGIN FEHLGESCHLAGEN</strong><br>" +
-      "Firebase-Code: <code>" + esc(err?.code || "unbekannt") + "</code><br>" +
-      "Meldung: " + esc(err?.message || String(err));
+    console.error("Anmeldung fehlgeschlagen:", err);
+    authError(err);
   }
 });
 $("registerForm").addEventListener("submit",async e=>{
@@ -312,10 +282,219 @@ async function renderTeam(){
  <div class="notice" style="margin-top:12px"><b>Ampel:</b> <b>Auf Kurs</b> = planmäßig · <b>Klärungsbedarf</b> = Abstimmung/Entscheidung nötig · <b>Handlungsbedarf</b> = aktives Eingreifen erforderlich.</div>${footer()}`;
 }
 
+
+function ensureTeacherNav(){
+  const nav = document.querySelector("#sidebar nav");
+  if(!nav) return;
+  let link = document.querySelector('[data-page="lernbegleitung"]');
+  if(isTeacher()){
+    if(!link){
+      link = document.createElement("a");
+      link.href="#lernbegleitung";
+      link.dataset.page="lernbegleitung";
+      link.className="nav-link teacher-nav";
+      link.innerHTML="<span>👩‍🏫</span> Lernbegleitung";
+      nav.appendChild(link);
+    }
+  }else if(link){
+    link.remove();
+  }
+}
+
+async function renderLernbegleitung(){
+  if(!isTeacher()){
+    return `${pageHead("GESCHÜTZTER BEREICH","Lernbegleitung","Dieser Bereich ist nur für Lehrkräfte freigeschaltet.")}<div class="card"><h3>Kein Zugriff</h3><p>Dein Konto besitzt keine Lehrkraft-Rolle.</p></div>${footer()}`;
+  }
+
+  let users=[],tasks=[],projects=[],journals=[],competencies=[];
+  try{
+    const [uSnap,tSnap,pSnap,jSnap,cSnap]=await Promise.all([
+      getDocs(collection(db,"users")),
+      getDocs(collection(db,"tasks")),
+      getDocs(collection(db,"projects")),
+      getDocs(collection(db,"journal")),
+      getDocs(collection(db,"competencies"))
+    ]);
+    users=uSnap.docs.map(d=>({id:d.id,...d.data()}));
+    tasks=tSnap.docs.map(d=>({id:d.id,...d.data()}));
+    projects=pSnap.docs.map(d=>({id:d.id,...d.data()}));
+    journals=jSnap.docs.map(d=>({id:d.id,...d.data()}));
+    competencies=cSnap.docs.map(d=>({id:d.id,...d.data()}));
+  }catch(e){
+    console.error("Lernbegleitung konnte nicht geladen werden:",e);
+    return `${pageHead("LERNBEGLEITUNG","Campus-Lernbegleitung","Überblick für Lehrkräfte.")}<div class="card"><h3>Daten konnten nicht geladen werden.</h3><p>Bitte prüfe die Firestore-Sicherheitsregeln.</p></div>${footer()}`;
+  }
+
+  const students=users.filter(u=>u.role==="student").sort((a,b)=>(a.displayName||a.email||"").localeCompare(b.displayName||b.email||"","de"));
+  const activeTasks=tasks.filter(t=>t.status==="green").length;
+  const clarification=tasks.filter(t=>t.status==="yellow").length;
+  const action=tasks.filter(t=>t.status==="red").length;
+  const withSignals=students.filter(s=>studentSupportSignal(s,tasks,journals,competencies).level!=="green").length;
+
+  const rows=students.map(s=>{
+    const signal=studentSupportSignal(s,tasks,journals,competencies);
+    const st=tasks.filter(t=>t.ownerUid===s.uid);
+    const jr=journals.filter(j=>j.uid===s.uid);
+    const cp=competencies.filter(c=>c.uid===s.uid);
+    const avg=cp.length ? (cp.reduce((a,c)=>a+Number(c.value||0),0)/cp.length).toFixed(1) : "—";
+    return `<div class="support-student-row">
+      <div class="support-student-main">
+        <div class="support-avatar">${esc((s.displayName||"S").charAt(0).toUpperCase())}</div>
+        <div>
+          <strong>${esc(s.displayName||"Schüler/in")}</strong>
+          <small>${esc(s.email||"")} · ${st.length} Aufgaben · ${jr.length} Reflexionen · Kompetenz Ø ${avg}/10</small>
+          <div class="support-signal ${signal.level}"><span class="dot ${signal.level}"></span><span>${esc(signal.label)}</span></div>
+        </div>
+      </div>
+      <div class="support-actions"><button class="secondary" onclick="openStudentSupport('${esc(s.uid)}')">Lernstand öffnen →</button></div>
+    </div>`;
+  }).join("");
+
+  return `${pageHead("LEHRKRAFT","Lernbegleitung","Lernstände wahrnehmen, Gespräche vorbereiten und gemeinsam nächste Schritte entwickeln.")}
+  <div class="grid grid-4">
+    <div class="card stat"><b>${students.length}</b><span>Schüler/innen</span></div>
+    <div class="card stat"><b>${activeTasks}</b><span>Aufgaben auf Kurs</span></div>
+    <div class="card stat"><b>${clarification}</b><span>Klärungsbedarf</span></div>
+    <div class="card stat"><b>${withSignals}</b><span>Gespräch sinnvoll</span></div>
+  </div>
+  <div class="card support-intro" style="margin-top:12px">
+    <div><div class="kicker">LERNCOACHING</div><h2>Was braucht dieser Schüler gerade?</h2><p>Die Übersicht verbindet Aufgaben, Projekte, Kompetenzen und Reflexionen zu einer Gesprächsgrundlage. Die Hinweise sind <b>keine Diagnose</b>, sondern nur Anlässe zum Nachfragen.</p></div>
+    <div class="chips"><span class="chip">sehen</span><span class="chip">fragen</span><span class="chip">reflektieren</span><span class="chip">nächsten Schritt vereinbaren</span></div>
+  </div>
+  <div class="card" style="margin-top:12px">
+    <div class="page-head" style="margin-bottom:8px"><div><div class="kicker">KLASSE</div><h2>Meine Campusklasse</h2><p>Öffne den Lernstand eines Schülers für ein gezieltes Lernbegleitungsgespräch.</p></div></div>
+    <div class="support-list">${rows || `<div class="empty"><strong>Noch keine Schülerkonten vorhanden.</strong> Sobald sich Schüler registrieren, erscheinen sie hier.</div>`}</div>
+  </div>
+  <div class="grid grid-3" style="margin-top:12px">
+    <div class="card"><div class="support-mini-head"><span class="dot green"></span><strong>Auf Kurs</strong></div><p>Der aktuelle Lernweg wirkt planmäßig. Im Gespräch kann der nächste Entwicklungsschritt fokussiert werden.</p></div>
+    <div class="card"><div class="support-mini-head"><span class="dot yellow"></span><strong>Klärungsbedarf</strong></div><p>Es gibt Hinweise auf offene Aufgaben, fehlende Reflexion oder einen Bereich, bei dem Nachfragen sinnvoll sein kann.</p></div>
+    <div class="card"><div class="support-mini-head"><span class="dot red"></span><strong>Handlungsbedarf</strong></div><p>Es gibt deutliche Signale wie dringende Aufgaben oder mehrere offene Baustellen. Erst Gespräch führen, dann gemeinsam priorisieren.</p></div>
+  </div>
+  <div class="notice" style="margin-top:12px"><b>Datenschutz:</b> Die Ansicht ist für die schulische Lernbegleitung gedacht. Persönliche Lerninformationen bitte nur im erforderlichen schulischen Rahmen nutzen.</div>
+  ${footer()}`;
+}
+
+function daysSince(v){
+  if(!v) return null;
+  let d=null;
+  if(v?.seconds) d=new Date(v.seconds*1000);
+  else if(v?.toDate) d=v.toDate();
+  else if(typeof v==="string") d=new Date(v);
+  if(!d || Number.isNaN(d.getTime())) return null;
+  return Math.floor((Date.now()-d.getTime())/86400000);
+}
+
+function studentSupportSignal(student,tasks,journals,competencies){
+  const mine=tasks.filter(t=>t.ownerUid===student.uid);
+  const mineJournal=journals.filter(j=>j.uid===student.uid);
+  const mineComp=competencies.filter(c=>c.uid===student.uid);
+  const red=mine.filter(t=>t.status==="red").length;
+  const yellow=mine.filter(t=>t.status==="yellow").length;
+  const overdue=mine.filter(t=>{
+    if(!t.deadline || t.deadline==="—" || t.status==="green") return false;
+    const d=new Date(t.deadline+"T23:59:59");
+    return !Number.isNaN(d.getTime()) && d.getTime()<Date.now();
+  }).length;
+  const latestJournal=mineJournal.slice().sort((a,b)=>{
+    const ad=daysSince(a.createdAt); const bd=daysSince(b.createdAt);
+    return (ad??9999)-(bd??9999);
+  })[0];
+  const journalAge=latestJournal ? daysSince(latestJournal.createdAt) : null;
+
+  if(red>0 || overdue>=2) return {level:"red",label:"Gespräch zeitnah sinnvoll"};
+  if(yellow>0 || overdue===1 || mineComp.length===0 || journalAge===null || journalAge>21) return {level:"yellow",label:"Nachfragen & nächsten Schritt klären"};
+  return {level:"green",label:"Lernweg im Blick behalten"};
+}
+
+function supportNeedText(tasks,journals,competencies,projects,uid){
+  const mine=tasks.filter(t=>t.ownerUid===uid);
+  const journal=journals.filter(j=>j.uid===uid).sort((a,b)=>(daysSince(a.createdAt)??9999)-(daysSince(b.createdAt)??9999));
+  const comp=competencies.filter(c=>c.uid===uid);
+  const proj=projects.filter(p=>String(p.createdBy||"")===String(uid) || String(p.ownerUid||"")===String(uid) || String(p.studentUid||"")===String(uid));
+  const red=mine.filter(t=>t.status==="red").length;
+  const yellow=mine.filter(t=>t.status==="yellow").length;
+  const overdue=mine.filter(t=>{
+    if(!t.deadline || t.deadline==="—") return false;
+    const d=new Date(t.deadline+"T23:59:59");
+    return !Number.isNaN(d.getTime()) && d.getTime()<Date.now() && t.status!=="green";
+  }).length;
+  const age=journal[0]?daysSince(journal[0].createdAt):null;
+  const needs=[];
+  if(red) needs.push(`${red} Aufgabe(n) mit Handlungsbedarf priorisieren`);
+  if(overdue) needs.push(`${overdue} überfällige Aufgabe(n) gemeinsam klären`);
+  if(yellow) needs.push(`${yellow} Aufgabe(n) mit Klärungsbedarf besprechen`);
+  if(!comp.length) needs.push("Kompetenzprofil gemeinsam starten");
+  if(age===null || age>21) needs.push("Lernjournal/Reflexion wieder aufnehmen");
+  if(!proj.length) needs.push("prüfen, ob ein Projektbezug hilfreich wäre");
+  return needs.length ? needs.slice(0,3) : ["nächsten persönlichen Entwicklungsschritt festlegen"];
+}
+
+async function openStudentSupport(uid){
+  if(!isTeacher()) return;
+  try{
+    const [uSnap,tasksSnap,journalSnap,compSnap,projectSnap]=await Promise.all([
+      getDoc(doc(db,"users",uid)),
+      getDocs(query(collection(db,"tasks"),where("ownerUid","==",uid),limit(100))),
+      getDocs(query(collection(db,"journal"),where("uid","==",uid),limit(50))),
+      getDocs(query(collection(db,"competencies"),where("uid","==",uid),limit(50))),
+      getDocs(collection(db,"projects"))
+    ]);
+
+    const u=uSnap.exists()?uSnap.data():{};
+    const tasks=tasksSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const journals=journalSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const comps=compSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const projects=projectSnap.docs.map(d=>({id:d.id,...d.data()}));
+    const signal=studentSupportSignal({uid},tasks,journals,comps);
+    const needs=supportNeedText(tasks,journals,comps,projects,uid);
+    const mineProjects=projects.filter(p=>String(p.createdBy||"")===String(uid) || String(p.ownerUid||"")===String(uid) || String(p.studentUid||"")===String(uid));
+    const avg=comps.length ? (comps.reduce((a,c)=>a+Number(c.value||0),0)/comps.length).toFixed(1) : "—";
+
+    modal(`<button class="modal-close" onclick="closeModal()">×</button>
+      <div class="kicker">LERNBEGLEITUNG · LERNSTAND</div>
+      <div class="support-profile-head"><div class="support-avatar large">${esc((u.displayName||"S").charAt(0).toUpperCase())}</div><div><h2>${esc(u.displayName||"Schüler/in")}</h2><p>${esc(u.email||"")}</p><div class="support-signal ${signal.level}"><span class="dot ${signal.level}"></span><span>${esc(signal.label)}</span></div></div></div>
+
+      <div class="grid grid-4" style="margin-top:14px">
+        <div class="card stat"><b>${tasks.length}</b><span>Aufgaben</span></div>
+        <div class="card stat"><b>${mineProjects.length}</b><span>Projekte</span></div>
+        <div class="card stat"><b>${comps.length}</b><span>Kompetenzen</span></div>
+        <div class="card stat"><b>${avg}/10</b><span>Kompetenz Ø</span></div>
+      </div>
+
+      <div class="support-coach-box">
+        <div class="kicker">GESPRÄCHSIMPULS</div>
+        <h3>Was braucht dieser Schüler gerade?</h3>
+        <ul>${needs.map(n=>`<li>${esc(n)}</li>`).join("")}</ul>
+        <p class="support-question"><b>Gute Einstiegsfrage:</b> „Was läuft gerade gut – und wo kommst du selbst noch nicht weiter?“</p>
+      </div>
+
+      <div class="support-section"><h3>☑️ Aktueller Lernstand</h3>
+        <div class="list">${tasks.slice().sort((a,b)=>String(a.deadline||"").localeCompare(String(b.deadline||""))).map(taskHTML).join("")||`<div class="empty">Keine Aufgaben vorhanden.</div>`}</div>
+      </div>
+
+      <div class="support-section"><h3>🚀 Projekte</h3>
+        <div class="list">${mineProjects.map(p=>`<div class="list-item"><div><strong>${esc(p.title||"Projekt")}</strong><small>${esc(p.goal||"")} · ${esc(p.team||"")}</small></div><span class="pill">${Number(p.progress||0)}%</span></div>`).join("")||`<div class="empty">Keine eindeutig zugeordneten Projekte vorhanden.</div>`}</div>
+      </div>
+
+      <div class="support-section"><h3>🧩 Kompetenzen</h3>
+        <div class="support-competencies">${comps.map(c=>`<div class="support-competency"><div><strong>${esc(c.name||"Kompetenz")}</strong><span>${Number(c.value||0)}/10</span></div><div class="progress"><i style="width:${Math.max(0,Math.min(10,Number(c.value||0)))*10}%"></i></div></div>`).join("")||`<div class="empty">Noch kein Kompetenzprofil.</div>`}</div>
+      </div>
+
+      <div class="support-section"><h3>📓 Letzte Reflexionen</h3>
+        <div class="list">${journals.slice().sort((a,b)=>(daysSince(a.createdAt)??9999)-(daysSince(b.createdAt)??9999)).slice(0,5).map(j=>`<article class="card"><span class="pill">${fmtDate(j.createdAt)}</span><h4>${esc(j.title||"Reflexion")}</h4><p>${esc(j.text||"")}</p></article>`).join("")||`<div class="empty">Noch keine Reflexionen.</div>`}</div>
+      </div>
+
+      <div class="notice" style="margin-top:14px"><b>Hinweis:</b> Die automatisch formulierten Gesprächsimpulse sind keine pädagogische oder psychologische Diagnose. Sie dienen ausschließlich als praktische Gesprächsanregung.</div>`);
+  }catch(e){
+    console.error("Schüleransicht:",e);
+    toast("Lernbegleitung konnte nicht geöffnet werden.");
+  }
+}
+
 async function render(){
  if(!currentUser)return;
  const p=location.hash.replace("#","")||"start";
- const pages={start:renderStart,kompass:renderKompass,lernwerkstatt:renderLernwerkstatt,forum:renderForum,projekte:renderProjekte,kompetenz:renderKompetenz,journal:renderJournal,praktikum:renderPraktikum,ki:renderKI,kalender:renderKalender,team:renderTeam};
+ const pages={start:renderStart,kompass:renderKompass,lernwerkstatt:renderLernwerkstatt,forum:renderForum,projekte:renderProjekte,kompetenz:renderKompetenz,journal:renderJournal,praktikum:renderPraktikum,ki:renderKI,kalender:renderKalender,team:renderTeam,lernbegleitung:renderLernbegleitung};
  const fn=pages[p]||renderStart;
  document.querySelectorAll(".nav-link").forEach(a=>a.classList.toggle("active",a.dataset.page===p));
  try{$("content").innerHTML=await fn()}catch(e){console.error(e);$("content").innerHTML=`<div class="card"><h3>Die Seite konnte nicht geladen werden.</h3><p>Bitte prüfe die Firestore-Sicherheitsregeln und die Browser-Konsole.</p></div>`}
