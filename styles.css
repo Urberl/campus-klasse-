@@ -296,5 +296,213 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
 @media (max-width: 700px) {
   .method-head {
     flex-direction: column;
+  }/* =========================================================
+   CAMPUSKLASSE – LERNIMPULSE
+   CSS-Zusatz
+   ========================================================= */
+
+/* Einführung / Fortschritt */
+.impulse-intro {
+  overflow: hidden;
+}
+
+.impulse-progress-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.impulse-progress-head h2 {
+  margin: 8px 0 6px;
+}
+
+.impulse-progress-head p {
+  max-width: 720px;
+  margin-bottom: 0;
+}
+
+.impulse-count {
+  min-width: 90px;
+  text-align: center;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: var(--bg);
+  border: 1px solid var(--line);
+}
+
+.impulse-count strong {
+  display: block;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.impulse-count span {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.impulse-progress-label {
+  margin-top: 7px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+
+/* Impuls-Karten */
+.impulse-card {
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    border-color .18s ease;
+}
+
+.impulse-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+.impulse-card .emoji,
+.impulse-category .emoji {
+  display: block;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.impulse-card strong,
+.impulse-category strong {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.impulse-card small,
+.impulse-category small {
+  display: block;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+
+/* Kategorien */
+.impulse-category {
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.impulse-category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+}
+
+
+/* Bereich "Was passt gerade zu dir?" */
+.impulse-section {
+  margin-top: 24px;
+}
+
+.impulse-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.impulse-section-head h2 {
+  margin: 5px 0 0;
+}
+
+.impulse-section-head .chips {
+  justify-content: flex-end;
+}
+
+
+/* Filter */
+.impulse-filter {
+  cursor: pointer;
+}
+
+.impulse-filter.active {
+  font-weight: 700;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+
+/* Modal / Impuls-Aufgabe */
+.impulse-card p {
+  line-height: 1.55;
+}
+
+#impulseAnswer {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical;
+}
+
+
+/* Mobile */
+@media (max-width: 800px) {
+
+  .impulse-progress-head {
+    flex-direction: column;
   }
+
+  .impulse-count {
+    align-self: flex-start;
+  }
+
+  .impulse-section-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .impulse-section-head .chips {
+    justify-content: flex-start;
+  }
+}
+
+
+@media (max-width: 600px) {
+
+  .impulse-progress-head h2 {
+    font-size: 21px;
+  }
+
+  .impulse-count {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .impulse-count strong {
+    display: inline;
+    font-size: 24px;
+  }
+
+  .impulse-count span {
+    display: inline;
+    margin-top: 0;
+    text-align: left;
+  }
+
+  .impulse-filter {
+    font-size: 12px;
+  }
+
+  .impulse-card,
+  .impulse-category {
+    padding: 16px;
+  }
+}
 }
