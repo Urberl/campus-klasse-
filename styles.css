@@ -530,5 +530,111 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
 
   .impulse-wheel-inner strong {
     font-size: 11px;
+  }/* =========================================================
+   CAMPUSKLASSE – LERNJOURNAL
+   Zusatz für styles.css
+   ========================================================= */
+
+.lj-entry-list {
+  display: grid;
+  gap: 12px;
+}
+
+.lj-entry {
+  position: relative;
+}
+
+.lj-entry-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 14px;
+}
+
+.lj-entry-head h3 {
+  margin: 7px 0 0;
+}
+
+.lj-field {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.lj-field strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lj-field p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.lj-entry-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+/* ---------------------------------------------------------
+   MOTIVIERENDE NACHRICHT NACH DEM SPEICHERN
+   --------------------------------------------------------- */
+
+.lj-motivation {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 18px 0;
+  padding: 20px;
+  border-radius: 18px;
+  background: var(--soft-green);
+  border: 1px solid var(--line);
+}
+
+.lj-motivation-icon {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  font-size: 26px;
+}
+
+.lj-motivation p {
+  margin: 8px 0 0;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+
+  .lj-entry-head {
+    flex-direction: column;
+    gap: 8px;
   }
+
+  .lj-entry-actions {
+    flex-wrap: wrap;
+  }
+
+  .lj-motivation {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .lj-motivation p {
+    font-size: 16px;
+  }
+
+}
 }
