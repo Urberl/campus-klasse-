@@ -241,4 +241,40 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
     text-align: center;
     transform: rotate(90deg);
   }
+}/* =========================================================
+   LERNMETHODEN
+   ========================================================= */
+
+.method-card {
+  scroll-margin-top: 20px;
+}
+
+.method-head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.method-head .emoji {
+  font-size: 34px;
+  flex: 0 0 auto;
+}
+
+.method-head h2 {
+  margin: 0 0 5px;
+}
+
+.method-steps {
+  margin: 10px 0 14px;
+  padding-left: 24px;
+}
+
+.method-steps li {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 700px) {
+  .method-head {
+    flex-direction: column;
+  }
 }
