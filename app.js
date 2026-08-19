@@ -47,27 +47,27 @@ const firebaseConfig = {
 
 
 /* =========================================================
-   CAMPUSKLASSE MASTER â€“ STABILE MODULREGISTRY
-   Die Master-App selbst enthÃ¤lt keine Pflicht-Imports
-   von Zusatzmodulen. Module werden erst beim Ã–ffnen geladen.
+   CAMPUSKLASSE MASTER – STABILE MODULREGISTRY
+   Die Master-App selbst enthält keine Pflicht-Imports
+   von Zusatzmodulen. Module werden erst beim Öffnen geladen.
    ========================================================= */
 const CAMPUS_MODULES={
-  lernpfad:{label:"ðŸ§­ PersÃ¶nlicher Lernpfad",route:"lernpfad",ready:true},
-  lernressourcen:{label:"ðŸ“š Lernressourcen",route:"ressourcen",ready:true},
-  lernjournal:{label:"ðŸ““ Lernjournal",route:"journal",ready:true},
-  lernmethoden:{label:"ðŸ§° Lernmethoden",route:"methoden",ready:false},
-  lernimpulse:{label:"ðŸ’¡ Lernimpulse",route:"impulse",ready:false},
-  lernstand:{label:"ðŸ“Š Lernstandsmessung",route:"lernstand",ready:false},
-  lerncoaching:{label:"ðŸ’¬ Lerncoaching",route:"lerncoaching",ready:false},
-  resilienz:{label:"ðŸŒ± Resilienz & Respressi",route:"resilienz",ready:false},
-  kompetenz:{label:"ðŸ§© Kompetenzwerkstatt",route:"kompetenz",ready:true},
-  forum:{label:"ðŸ’¬ Campus-Forum",route:"forum",ready:true},
-  projekte:{label:"ðŸš€ Projekte",route:"projekte",ready:true},
-  praxis:{label:"ðŸ¢ Praxis & Partnerschaften",route:"praktikum",ready:true},
-  ki:{label:"ðŸ¤– KI-Innovationslabor",route:"ki",ready:true},
-  kalender:{label:"ðŸ—“ï¸ Campus-Kalender",route:"kalender",ready:true},
-  kompetenzprofil:{label:"ðŸŽ¯ Kompetenzprofil",route:"kompetenzprofil",ready:false},
-  team:{label:"ðŸ‘¥ Team & SQ",route:"team",ready:true}
+  lernpfad:{label:"🧭 Persönlicher Lernpfad",route:"lernpfad",ready:true},
+  lernressourcen:{label:"📚 Lernressourcen",route:"ressourcen",ready:true},
+  lernjournal:{label:"📓 Lernjournal",route:"journal",ready:true},
+  lernmethoden:{label:"🧰 Lernmethoden",route:"methoden",ready:false},
+  lernimpulse:{label:"💡 Lernimpulse",route:"impulse",ready:false},
+  lernstand:{label:"📊 Lernstandsmessung",route:"lernstand",ready:false},
+  lerncoaching:{label:"💬 Lerncoaching",route:"lerncoaching",ready:false},
+  resilienz:{label:"🌱 Resilienz & Respressi",route:"resilienz",ready:false},
+  kompetenz:{label:"🧩 Kompetenzwerkstatt",route:"kompetenz",ready:true},
+  forum:{label:"💬 Campus-Forum",route:"forum",ready:true},
+  projekte:{label:"🚀 Projekte",route:"projekte",ready:true},
+  praxis:{label:"🏢 Praxis & Partnerschaften",route:"praktikum",ready:true},
+  ki:{label:"🤖 KI-Innovationslabor",route:"ki",ready:true},
+  kalender:{label:"🗓️ Campus-Kalender",route:"kalender",ready:true},
+  kompetenzprofil:{label:"🎯 Kompetenzprofil",route:"kompetenzprofil",ready:false},
+  team:{label:"👥 Team & SQ",route:"team",ready:true}
 };
 
 const configReady = !Object.values(firebaseConfig).some(v => String(v).includes("HIER_") || String(v).includes("DEIN-PROJEKT"));
@@ -76,25 +76,25 @@ let app=null, auth=null, db=null;
 
 const $=id=>document.getElementById(id);
 const esc=v=>String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-const statusLabel={green:"Auf Kurs",yellow:"KlÃ¤rungsbedarf",red:"Handlungsbedarf"};
-const labels={question:"â“ Frage",info:"ðŸ“¢ Info",idea:"ðŸ’¡ Idee",project:"ðŸš€ Projekt",practice:"ðŸ¢ Praxis"};
+const statusLabel={green:"Auf Kurs",yellow:"Klärungsbedarf",red:"Handlungsbedarf"};
+const labels={question:"❓ Frage",info:"📢 Info",idea:"💡 Idee",project:"🚀 Projekt",practice:"🏢 Praxis"};
 let currentUser=null, profile=null, unsubscribers=[];
 
 function toast(t){const x=$("toast");x.textContent=t;x.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>x.classList.remove("show"),2500)}
 function authError(err){
   const map={
     "auth/invalid-credential":"E-Mail oder Passwort ist nicht korrekt.",
-    "auth/email-already-in-use":"FÃ¼r diese E-Mail existiert bereits ein Konto.",
+    "auth/email-already-in-use":"Für diese E-Mail existiert bereits ein Konto.",
     "auth/weak-password":"Das Passwort muss mindestens 6 Zeichen haben.",
-    "auth/invalid-email":"Bitte eine gÃ¼ltige E-Mail-Adresse eingeben.",
-    "auth/too-many-requests":"Zu viele Versuche. Bitte spÃ¤ter erneut versuchen."
+    "auth/invalid-email":"Bitte eine gültige E-Mail-Adresse eingeben.",
+    "auth/too-many-requests":"Zu viele Versuche. Bitte später erneut versuchen."
   };
-  $("authError").textContent=map[err?.code]||"Anmeldung konnte nicht durchgefÃ¼hrt werden.";
+  $("authError").textContent=map[err?.code]||"Anmeldung konnte nicht durchgeführt werden.";
 }
 function modal(html){$("modal").innerHTML=html;$("modalBackdrop").hidden=false}
 function closeModal(){$("modalBackdrop").hidden=true}
 function pageHead(k,h,p,actions=""){return `<div class="page-head"><div><div class="kicker">${k}</div><h1>${h}</h1><p>${p}</p></div><div class="actions">${actions}</div></div>`}
-function footer(){return `<div class="footer"><span>Campusklasse 26/27 Â· FOSBOS Weilheim</span><span>Gemeinsam Â· offen Â· respektvoll</span></div>`}
+function footer(){return `<div class="footer"><span>Campusklasse 26/27 · FOSBOS Weilheim</span><span>Gemeinsam · offen · respektvoll</span></div>`}
 function tile(icon,title,text,target){return `<a class="card tile" href="#${target}"><span class="emoji">${icon}</span><strong>${title}</strong><small>${text}</small></a>`}
 function statusDot(s){return `<span class="dot ${s}"></span>`}
 function isTeacher(){return profile?.role==="teacher"||profile?.role==="admin"}
@@ -142,7 +142,7 @@ async function renderRessourcenRoute(){
     return await module.renderRessourcen();
   }catch(error){
     console.error("Lernressourcen-Modul konnte nicht geladen werden:",error);
-    return moduleError("ðŸ“š Lernressourcen","modules/lernressourcen.js",error);
+    return moduleError("📚 Lernressourcen","modules/lernressourcen.js",error);
   }
 }
 
@@ -152,16 +152,16 @@ async function renderLernpfadRoute(){
     return await module.renderLernpfad();
   }catch(error){
     console.error("Lernpfad-Modul konnte nicht geladen werden:",error);
-    return moduleError("ðŸ§­ PersÃ¶nlicher Lernpfad","modules/lernpfad.js",error);
+    return moduleError("🧭 Persönlicher Lernpfad","modules/lernpfad.js",error);
   }
 }
 
 function moduleError(title,file,error){
-  return `${pageHead("CAMPUS-MODUL",title,"Das einzelne Modul konnte nicht geladen werden.",`<button class="secondary" onclick="go('start')">â† Startseite</button>`)}
+  return `${pageHead("CAMPUS-MODUL",title,"Das einzelne Modul konnte nicht geladen werden.",`<button class="secondary" onclick="go('start')">← Startseite</button>`)}
   <div class="card">
     <h3>Die Campus-App selbst funktioniert.</h3>
     <p>Nur dieses Modul ist momentan nicht erreichbar.</p>
-    <div class="notice"><b>BenÃ¶tigte Datei:</b> ${esc(file)}<br><small>${esc(error?.message||"Unbekannter Fehler")}</small></div>
+    <div class="notice"><b>Benötigte Datei:</b> ${esc(file)}<br><small>${esc(error?.message||"Unbekannter Fehler")}</small></div>
   </div>${footer()}`;
 }
 
@@ -179,7 +179,7 @@ $("loginForm").addEventListener("submit",async e=>{
 });
 $("registerForm").addEventListener("submit",async e=>{
  e.preventDefault();$("authError").textContent="";
- if($("registerPassword").value!==$("registerPassword2").value){$("authError").textContent="Die PasswÃ¶rter stimmen nicht Ã¼berein.";return}
+ if($("registerPassword").value!==$("registerPassword2").value){$("authError").textContent="Die Passwörter stimmen nicht überein.";return}
  if(!configReady){$("authError").textContent="Firebase ist noch nicht konfiguriert.";return}
  try{
    await loadFirebase();
@@ -191,7 +191,7 @@ $("registerForm").addEventListener("submit",async e=>{
 $("forgotBtn").onclick=async()=>{
  const email=$("loginEmail").value.trim();
  if(!email){$("authError").textContent="Bitte zuerst deine E-Mail-Adresse eingeben.";return}
- try{await loadFirebase();await sendPasswordResetEmail(auth,email);toast("E-Mail zum ZurÃ¼cksetzen wurde versendet.")}catch(err){console.error(err);authError(err)}
+ try{await loadFirebase();await sendPasswordResetEmail(auth,email);toast("E-Mail zum Zurücksetzen wurde versendet.")}catch(err){console.error(err);authError(err)}
 };
 $("logoutBtn").onclick=async()=>{
   try{await loadFirebase();await signOut(auth)}catch(e){console.error(e)}
@@ -204,106 +204,106 @@ async function getCollection(name,sortField="createdAt",desc=true){
  const q=query(collection(db,name),orderBy(sortField,desc?"desc":"asc"),limit(100));
  const snap=await getDocs(q);return snap.docs.map(d=>({id:d.id,...d.data()}));
 }
-function fmtDate(v){if(!v)return"â€”";if(v.seconds)return new Date(v.seconds*1000).toLocaleDateString("de-DE");return String(v)}
-function cleanDateInput(v){return v||"â€”"}
+function fmtDate(v){if(!v)return"—";if(v.seconds)return new Date(v.seconds*1000).toLocaleDateString("de-DE");return String(v)}
+function cleanDateInput(v){return v||"—"}
 
 async function renderStart(){
  let tasks=[],projects=[],posts=[],calendar=[];
  try{[tasks,projects,posts,calendar]=await Promise.all([getCollection("tasks","deadline",false),getCollection("projects"),getCollection("posts"),getCollection("calendar","date",false)])}catch(e){}
  const on=tasks.filter(x=>x.status==="green").length;
- return `<section class="hero"><div><span class="badge">ðŸ« CAMPUSKLASSE 26/27</span><h1>Willkommen auf dem Campus.</h1><p>Hier verbinden wir Lernen, Projekte, Praxis und Gemeinschaft. Alle angemeldeten Mitglieder arbeiten am selben digitalen Campus.</p></div><div class="actions"><button class="primary" onclick="go('kompass')">Mein Kompass â†’</button><button class="secondary" onclick="go('forum')">Campus-Forum</button></div></section>
- ${pageHead("ÃœBERSICHT","Unser Campus","Die wichtigsten Bereiche auf einen Blick.")}
+ return `<section class="hero"><div><span class="badge">🏫 CAMPUSKLASSE 26/27</span><h1>Willkommen auf dem Campus.</h1><p>Hier verbinden wir Lernen, Projekte, Praxis und Gemeinschaft. Alle angemeldeten Mitglieder arbeiten am selben digitalen Campus.</p></div><div class="actions"><button class="primary" onclick="go('kompass')">Mein Kompass →</button><button class="secondary" onclick="go('forum')">Campus-Forum</button></div></section>
+ ${pageHead("ÜBERSICHT","Unser Campus","Die wichtigsten Bereiche auf einen Blick.")}
  <div class="grid grid-4">
- ${tile("ðŸ§­","Campus-Kompass","Dein persÃ¶nlicher Lern- und ProjektÃ¼berblick.","kompass")}
- ${tile("ðŸ› ï¸","Lernwerkstatt","LernauftrÃ¤ge, Methoden, Tools und KI.","lernwerkstatt")}
- ${tile("ðŸ’¬","Campus-Forum","Austauschen, fragen, helfen und gemeinsam denken.","forum")}
- ${tile("ðŸš€","Projekte","Projektteams, Ziele, Fortschritt und Ergebnisse.","projekte")}
- ${tile("ðŸ§©","Kompetenzwerkstatt","Kompetenzen sichtbar machen und entwickeln.","kompetenz")}
- ${tile("ðŸ““","Lernjournal","Lernweg, Reflexionen und nÃ¤chste Schritte.","journal")}
- ${tile("ðŸ¢","Praktikum & Praxis","PraxisauftrÃ¤ge und Reflexion.","praktikum")}
- ${tile("ðŸ¤–","KI-Innovationslabor","KI-Ideen und Innovationspartnerschaften.","ki")}</div>
+ ${tile("🧭","Campus-Kompass","Dein persönlicher Lern- und Projektüberblick.","kompass")}
+ ${tile("🛠️","Lernwerkstatt","Lernaufträge, Methoden, Tools und KI.","lernwerkstatt")}
+ ${tile("💬","Campus-Forum","Austauschen, fragen, helfen und gemeinsam denken.","forum")}
+ ${tile("🚀","Projekte","Projektteams, Ziele, Fortschritt und Ergebnisse.","projekte")}
+ ${tile("🧩","Kompetenzwerkstatt","Kompetenzen sichtbar machen und entwickeln.","kompetenz")}
+ ${tile("📓","Lernjournal","Lernweg, Reflexionen und nächste Schritte.","journal")}
+ ${tile("🏢","Praktikum & Praxis","Praxisaufträge und Reflexion.","praktikum")}
+ ${tile("🤖","KI-Innovationslabor","KI-Ideen und Innovationspartnerschaften.","ki")}</div>
  <div class="grid grid-3" style="margin-top:12px"><div class="card stat"><b>${tasks.length}</b><span>Arbeitspakete</span></div><div class="card stat"><b>${on}</b><span>auf Kurs</span></div><div class="card stat"><b>${currentUser?1:0}</b><span>dein Zugang ist aktiv</span></div></div>
  <div class="grid grid-2" style="margin-top:12px">
- <div class="card"><h3>ðŸ“¢ Campus-News</h3><div class="list">${posts.filter(p=>p.type==="info").slice(0,3).map(p=>`<div class="list-item"><div><strong>${esc(p.text)}</strong><small>${fmtDate(p.createdAt)}</small></div><span class="pill">Info</span></div>`).join("")||`<div class="empty">Noch keine News.</div>`}</div></div>
- <div class="card"><h3>ðŸ—“ï¸ NÃ¤chste Termine</h3><div class="list">${calendar.slice(0,3).map(c=>`<div class="list-item"><div><strong>${esc(c.title)}</strong><small>${esc(c.date)}</small></div><span class="pill green">Termin</span></div>`).join("")||`<div class="empty">Noch keine Termine.</div>`}</div></div></div>${footer()}`;
+ <div class="card"><h3>📢 Campus-News</h3><div class="list">${posts.filter(p=>p.type==="info").slice(0,3).map(p=>`<div class="list-item"><div><strong>${esc(p.text)}</strong><small>${fmtDate(p.createdAt)}</small></div><span class="pill">Info</span></div>`).join("")||`<div class="empty">Noch keine News.</div>`}</div></div>
+ <div class="card"><h3>🗓️ Nächste Termine</h3><div class="list">${calendar.slice(0,3).map(c=>`<div class="list-item"><div><strong>${esc(c.title)}</strong><small>${esc(c.date)}</small></div><span class="pill green">Termin</span></div>`).join("")||`<div class="empty">Noch keine Termine.</div>`}</div></div></div>${footer()}`;
 }
 
 async function renderKompass(){
  const tasks=await getCollection("tasks","deadline",false), projects=await getCollection("projects");
- return `${pageHead("PERSÃ–NLICH","Mein Campus-Kompass","Dein persÃ¶nlicher Ãœberblick Ã¼ber Aufgaben, Projekte, Ziele und Lernweg.",`<button class="primary" onclick="openTaskForm()">ï¼‹ Aufgabe</button>`)}
- <div class="grid grid-3"><div class="card stat"><b>${tasks.filter(t=>t.ownerUid===currentUser.uid).length}</b><span>Meine Aufgaben</span></div><div class="card stat"><b>${projects.length}</b><span>Projekte</span></div><div class="card stat"><b>${profile?.role==="teacher"?"Lehrkraft":profile?.role==="admin"?"Admin":"SchÃ¼ler/in"}</b><span>Rolle</span></div></div>
- <div class="card" style="margin-top:12px"><h3>â˜‘ï¸ Meine Aufgaben</h3><div class="list">${tasks.filter(t=>t.ownerUid===currentUser.uid).map(taskHTML).join("")||`<div class="empty"><strong>Noch keine Aufgaben</strong>Lege deine erste Aufgabe an.</div>`}</div></div>
- <div class="card" style="margin-top:12px"><h3>ðŸš€ Aktuelle Projekte</h3><div class="list">${projects.map(p=>`<div class="list-item"><div><strong>${esc(p.title)}</strong><small>${esc(p.team||"")} Â· ${esc(p.partner||"")}</small></div><span class="pill">${Number(p.progress||0)}%</span></div>`).join("")||`<div class="empty">Noch keine Projekte.</div>`}</div></div>${footer()}`;
+ return `${pageHead("PERSÖNLICH","Mein Campus-Kompass","Dein persönlicher Überblick über Aufgaben, Projekte, Ziele und Lernweg.",`<button class="primary" onclick="openTaskForm()">＋ Aufgabe</button>`)}
+ <div class="grid grid-3"><div class="card stat"><b>${tasks.filter(t=>t.ownerUid===currentUser.uid).length}</b><span>Meine Aufgaben</span></div><div class="card stat"><b>${projects.length}</b><span>Projekte</span></div><div class="card stat"><b>${profile?.role==="teacher"?"Lehrkraft":profile?.role==="admin"?"Admin":"Schüler/in"}</b><span>Rolle</span></div></div>
+ <div class="card" style="margin-top:12px"><h3>☑️ Meine Aufgaben</h3><div class="list">${tasks.filter(t=>t.ownerUid===currentUser.uid).map(taskHTML).join("")||`<div class="empty"><strong>Noch keine Aufgaben</strong>Lege deine erste Aufgabe an.</div>`}</div></div>
+ <div class="card" style="margin-top:12px"><h3>🚀 Aktuelle Projekte</h3><div class="list">${projects.map(p=>`<div class="list-item"><div><strong>${esc(p.title)}</strong><small>${esc(p.team||"")} · ${esc(p.partner||"")}</small></div><span class="pill">${Number(p.progress||0)}%</span></div>`).join("")||`<div class="empty">Noch keine Projekte.</div>`}</div></div>${footer()}`;
 }
-function taskHTML(t){return `<div class="list-item"><div><strong>${esc(t.title)}</strong><small>Verantwortlich: ${esc(t.ownerName||"")} Â· Deadline: ${esc(t.deadline||"â€”")} Â· NÃ¤chster Schritt: ${esc(t.next||"â€”")}</small></div><div class="traffic">${statusDot(t.status)}<span class="pill">${statusLabel[t.status]||"â€”"}</span></div></div>`}
+function taskHTML(t){return `<div class="list-item"><div><strong>${esc(t.title)}</strong><small>Verantwortlich: ${esc(t.ownerName||"")} · Deadline: ${esc(t.deadline||"—")} · Nächster Schritt: ${esc(t.next||"—")}</small></div><div class="traffic">${statusDot(t.status)}<span class="pill">${statusLabel[t.status]||"—"}</span></div></div>`}
 
 async function renderLernwerkstatt(){
   const resources=[
-    ["ðŸ§­","PersÃ¶nlicher Lernpfad","Ziele setzen, Lernschritte planen und Fortschritt erkennen.","lernpfad"],
-    ["ðŸ’¬","Lerncoaching","Individuelle Begleitung und Kontakt zu einer Lehrkraft.","lerncoaching"],
-    ["ðŸ§°","Lernmethoden","Planung, Lernen, Zusammenarbeit und Reflexion.","methoden"],
-    ["ðŸ“š","Lernressourcen","TaskCard, KI, Videos, ByCS/mebis und Webseiten.","ressourcen"],
-    ["ðŸ’¡","Lernimpulse","Kurze Impulse fÃ¼r Reflexion und Deeper Learning.","impulse"],
-    ["ðŸ“Š","Lernstandsmessung","Kurz prÃ¼fen: Wo stehe ich und was ist mein nÃ¤chster Schritt?","lernstand"],
-    ["ðŸ¤–","KI zum Lernen","KI bewusst, kritisch und produktiv einsetzen.","ki"],
-    ["â“","Fragen & Hilfe","Wenn du nicht weiterkommst: fragen und teilen.","forum"]
+    ["🧭","Persönlicher Lernpfad","Ziele setzen, Lernschritte planen und Fortschritt erkennen.","lernpfad"],
+    ["💬","Lerncoaching","Individuelle Begleitung und Kontakt zu einer Lehrkraft.","lerncoaching"],
+    ["🧰","Lernmethoden","Planung, Lernen, Zusammenarbeit und Reflexion.","methoden"],
+    ["📚","Lernressourcen","TaskCard, KI, Videos, ByCS/mebis und Webseiten.","ressourcen"],
+    ["💡","Lernimpulse","Kurze Impulse für Reflexion und Deeper Learning.","impulse"],
+    ["📊","Lernstandsmessung","Kurz prüfen: Wo stehe ich und was ist mein nächster Schritt?","lernstand"],
+    ["🤖","KI zum Lernen","KI bewusst, kritisch und produktiv einsetzen.","ki"],
+    ["❓","Fragen & Hilfe","Wenn du nicht weiterkommst: fragen und teilen.","forum"]
   ];
-  return `${pageHead("SELBSTSTÃ„NDIG LERNEN","Lernwerkstatt","Der offene Lernraum fÃ¼r LernauftrÃ¤ge, Methoden, Tools und KI.",`<button class="primary" onclick="openPostForm('idea')">ï¼‹ Lernimpuls</button>`)}
+  return `${pageHead("SELBSTSTÄNDIG LERNEN","Lernwerkstatt","Der offene Lernraum für Lernaufträge, Methoden, Tools und KI.",`<button class="primary" onclick="openPostForm('idea')">＋ Lernimpuls</button>`)}
   <div class="grid grid-4">${resources.map(x=>`<a class="card tile" href="#${x[3]}"><span class="emoji">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></a>`).join("")}</div>
   <div class="grid grid-2" style="margin-top:12px">
-    <div class="card"><h3>ðŸ§­ So kann ich starten</h3><div class="list">${["Ich mÃ¶chte etwas verstehen","Ich mÃ¶chte recherchieren","Ich mÃ¶chte etwas ausprobieren","Ich mÃ¶chte etwas gestalten","Ich mÃ¶chte ein Problem lÃ¶sen","Ich mÃ¶chte mich vorbereiten"].map(x=>`<div class="list-item"><strong>${x}</strong><span class="pill">Lernen</span></div>`).join("")}</div></div>
-    <div class="card"><h3>ðŸ¤– KI-Lernimpuls</h3><p>Nutze KI nicht nur fÃ¼r fertige Antworten. Bitte sie zum Beispiel, dir Fragen zu stellen, einen LÃ¶sungsweg zu prÃ¼fen oder Gegenargumente zu entwickeln.</p><div class="chips" style="margin-top:12px"><span class="chip">ErklÃ¤ren</span><span class="chip">Fragen</span><span class="chip">Feedback</span><span class="chip">Perspektiven</span></div></div>
+    <div class="card"><h3>🧭 So kann ich starten</h3><div class="list">${["Ich möchte etwas verstehen","Ich möchte recherchieren","Ich möchte etwas ausprobieren","Ich möchte etwas gestalten","Ich möchte ein Problem lösen","Ich möchte mich vorbereiten"].map(x=>`<div class="list-item"><strong>${x}</strong><span class="pill">Lernen</span></div>`).join("")}</div></div>
+    <div class="card"><h3>🤖 KI-Lernimpuls</h3><p>Nutze KI nicht nur für fertige Antworten. Bitte sie zum Beispiel, dir Fragen zu stellen, einen Lösungsweg zu prüfen oder Gegenargumente zu entwickeln.</p><div class="chips" style="margin-top:12px"><span class="chip">Erklären</span><span class="chip">Fragen</span><span class="chip">Feedback</span><span class="chip">Perspektiven</span></div></div>
   </div>${footer()}`;
 }
 
 async function renderForum(){
  const posts=await getCollection("posts");
- return `${pageHead("GEMEINSCHAFT","Campus-Forum","Gemeinsam denken, fragen, austauschen und unterstÃ¼tzen.",`<button class="primary" onclick="openPostForm()">ï¼‹ Beitrag schreiben</button>`)}
- <div class="toolbar"><div class="chips"><span class="chip">Alle</span><span class="chip">â“ Fragen</span><span class="chip">ðŸ“¢ Infos</span><span class="chip">ðŸ’¡ Ideen</span><span class="chip">ðŸš€ Projekte</span><span class="chip">ðŸ¢ Praxis</span></div><input class="search" id="forumSearch" placeholder="BeitrÃ¤ge durchsuchen â€¦"></div>
- <div class="list" id="forumList">${posts.map(postHTML).join("")||`<div class="empty"><strong>Noch keine BeitrÃ¤ge</strong>Schreibe den ersten Beitrag.</div>`}</div>
- <div class="card" style="margin-top:12px;background:var(--soft-green)"><h3>ðŸ¤ Campus hilft</h3><p>Du kannst anderen bei einem Thema helfen? Teile dein Wissen.</p><button class="secondary" style="margin-top:10px" onclick="openHelpForm()">Hilfe anbieten</button></div>${footer()}`;
+ return `${pageHead("GEMEINSCHAFT","Campus-Forum","Gemeinsam denken, fragen, austauschen und unterstützen.",`<button class="primary" onclick="openPostForm()">＋ Beitrag schreiben</button>`)}
+ <div class="toolbar"><div class="chips"><span class="chip">Alle</span><span class="chip">❓ Fragen</span><span class="chip">📢 Infos</span><span class="chip">💡 Ideen</span><span class="chip">🚀 Projekte</span><span class="chip">🏢 Praxis</span></div><input class="search" id="forumSearch" placeholder="Beiträge durchsuchen …"></div>
+ <div class="list" id="forumList">${posts.map(postHTML).join("")||`<div class="empty"><strong>Noch keine Beiträge</strong>Schreibe den ersten Beitrag.</div>`}</div>
+ <div class="card" style="margin-top:12px;background:var(--soft-green)"><h3>🤝 Campus hilft</h3><p>Du kannst anderen bei einem Thema helfen? Teile dein Wissen.</p><button class="secondary" style="margin-top:10px" onclick="openHelpForm()">Hilfe anbieten</button></div>${footer()}`;
 }
-function postHTML(p){const comments=Array.isArray(p.comments)?p.comments:[];return `<article class="forum-post"><div class="post-head"><div class="avatar">${p.authorUid===currentUser.uid?"ðŸ‘¤":"ðŸ«"}</div><div class="post-meta"><strong>${esc(p.authorName||"Campus-Mitglied")}</strong><small>${fmtDate(p.createdAt)}</small></div><span class="pill">${labels[p.type]||p.type||"Beitrag"}</span></div><div class="post-body">${esc(p.text)}</div><div class="post-actions"><button onclick="likePost('${p.id}')">â™¡ GefÃ¤llt mir (${Number(p.likes||0)})</button><button onclick="focusComment('${p.id}')">ðŸ’¬ Antworten (${comments.length})</button>${(p.authorUid===currentUser.uid||isTeacher())?`<button onclick="deletePost('${p.id}')">LÃ¶schen</button>`:""}</div><div class="comments">${comments.map(c=>`<div class="comment"><b>${esc(c.name)}:</b> ${esc(c.text)}</div>`).join("")}<div class="comment-box"><input id="comment-${p.id}" placeholder="Antwort schreiben â€¦"><button onclick="commentPost('${p.id}')">Senden</button></div></div></article>`}
+function postHTML(p){const comments=Array.isArray(p.comments)?p.comments:[];return `<article class="forum-post"><div class="post-head"><div class="avatar">${p.authorUid===currentUser.uid?"👤":"🏫"}</div><div class="post-meta"><strong>${esc(p.authorName||"Campus-Mitglied")}</strong><small>${fmtDate(p.createdAt)}</small></div><span class="pill">${labels[p.type]||p.type||"Beitrag"}</span></div><div class="post-body">${esc(p.text)}</div><div class="post-actions"><button onclick="likePost('${p.id}')">♡ Gefällt mir (${Number(p.likes||0)})</button><button onclick="focusComment('${p.id}')">💬 Antworten (${comments.length})</button>${(p.authorUid===currentUser.uid||isTeacher())?`<button onclick="deletePost('${p.id}')">Löschen</button>`:""}</div><div class="comments">${comments.map(c=>`<div class="comment"><b>${esc(c.name)}:</b> ${esc(c.text)}</div>`).join("")}<div class="comment-box"><input id="comment-${p.id}" placeholder="Antwort schreiben …"><button onclick="commentPost('${p.id}')">Senden</button></div></div></article>`}
 
 async function renderProjekte(){
  const projects=await getCollection("projects");
- return `${pageHead("DEEPER LEARNING","Projekte","Projektideen, Teams, Ziele, Fortschritt und Ergebnisse.",`<button class="primary" onclick="openProjectForm()">ï¼‹ Projekt</button>`)}
- <div class="grid grid-3">${projects.map(p=>`<div class="card"><div class="status-card">${statusDot(p.status||"green")}<div><h3>${esc(p.title)}</h3><p>${esc(p.goal||"")}</p></div></div><div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:5px"><span>${esc(p.team||"")} Â· ${esc(p.partner||"")}</span><b>${Number(p.progress||0)}%</b></div><div class="progress"><i style="width:${Number(p.progress||0)}%"></i></div></div></div>`).join("")||`<div class="empty">Noch keine Projekte.</div>`}</div>${footer()}`;
+ return `${pageHead("DEEPER LEARNING","Projekte","Projektideen, Teams, Ziele, Fortschritt und Ergebnisse.",`<button class="primary" onclick="openProjectForm()">＋ Projekt</button>`)}
+ <div class="grid grid-3">${projects.map(p=>`<div class="card"><div class="status-card">${statusDot(p.status||"green")}<div><h3>${esc(p.title)}</h3><p>${esc(p.goal||"")}</p></div></div><div style="margin-top:12px"><div style="display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-bottom:5px"><span>${esc(p.team||"")} · ${esc(p.partner||"")}</span><b>${Number(p.progress||0)}%</b></div><div class="progress"><i style="width:${Number(p.progress||0)}%"></i></div></div></div>`).join("")||`<div class="empty">Noch keine Projekte.</div>`}</div>${footer()}`;
 }
 async function renderKompetenz(){
  const mine=await getDocs(query(collection(db,"competencies"),where("uid","==",currentUser.uid)));
  const data=mine.docs.map(d=>({id:d.id,...d.data()}));
- return `${pageHead("ENTWICKLUNG","Kompetenzwerkstatt","Kompetenzen sichtbar machen, Ziele setzen und Entwicklung reflektieren.",`<button class="primary" onclick="openCompetenceForm()">ï¼‹ Kompetenz</button>`)}
+ return `${pageHead("ENTWICKLUNG","Kompetenzwerkstatt","Kompetenzen sichtbar machen, Ziele setzen und Entwicklung reflektieren.",`<button class="primary" onclick="openCompetenceForm()">＋ Kompetenz</button>`)}
  <div class="grid grid-2">${data.map(c=>`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h3>${esc(c.name)}</h3><span class="pill">${Number(c.value||0)}/10</span></div><div class="progress"><i style="width:${Number(c.value||0)*10}%"></i></div></div>`).join("")||`<div class="empty"><strong>Noch kein Kompetenzprofil</strong>Lege eine Kompetenz an.</div>`}</div>${footer()}`;
 }
 async function renderJournal(){
  const q=query(collection(db,"journal"),where("uid","==",currentUser.uid),orderBy("createdAt","desc"),limit(50));
  const snap=await getDocs(q), data=snap.docs.map(d=>({id:d.id,...d.data()}));
- return `${pageHead("REFLEXION","Lernjournal","Dein Lernweg, Reflexionen und nÃ¤chste Schritte.",`<button class="primary" onclick="openJournalForm()">ï¼‹ Eintrag</button>`)}
- <div class="list">${data.map(j=>`<article class="card"><div style="display:flex;justify-content:space-between"><div><span class="pill">${fmtDate(j.createdAt)}</span><h3 style="margin-top:9px">${esc(j.title)}</h3></div><span style="font-size:25px">${esc(j.mood||"ðŸ™‚")}</span></div><p>${esc(j.text)}</p></article>`).join("")||`<div class="empty"><strong>Noch kein Eintrag</strong>Starte mit einer kurzen Reflexion.</div>`}</div>${footer()}`;
+ return `${pageHead("REFLEXION","Lernjournal","Dein Lernweg, Reflexionen und nächste Schritte.",`<button class="primary" onclick="openJournalForm()">＋ Eintrag</button>`)}
+ <div class="list">${data.map(j=>`<article class="card"><div style="display:flex;justify-content:space-between"><div><span class="pill">${fmtDate(j.createdAt)}</span><h3 style="margin-top:9px">${esc(j.title)}</h3></div><span style="font-size:25px">${esc(j.mood||"🙂")}</span></div><p>${esc(j.text)}</p></article>`).join("")||`<div class="empty"><strong>Noch kein Eintrag</strong>Starte mit einer kurzen Reflexion.</div>`}</div>${footer()}`;
 }
 async function renderPraktikum(){
  const data=await getCollection("practice","createdAt",true);
- return `${pageHead("SCHULE â†” PRAXIS","Praktikum & Praxis","PraxisauftrÃ¤ge, Beobachtungen und Reflexionen verbinden Schule und Praktikumsbetrieb.",`<button class="primary" onclick="openPracticeForm()">ï¼‹ Praxisauftrag</button>`)}
- <div class="grid grid-2">${data.map(p=>`<div class="card"><span class="pill ${p.state==="offen"?"orange":"green"}">${esc(p.state||"geplant")}</span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p><small style="display:block;color:var(--muted);margin-top:9px">${esc(p.date||"")}</small></div>`).join("")||`<div class="empty">Noch keine PraxisauftrÃ¤ge.</div>`}</div>
- <div class="card" style="margin-top:12px"><h3>ðŸ¤ Praxispartner</h3><p>Praktikum ist Lern- und Innovationsraum: Beobachtungen aus der Praxis kÃ¶nnen zu Fragen, Projekten und KI-Innovationspartnerschaften werden.</p></div>${footer()}`;
+ return `${pageHead("SCHULE ↔ PRAXIS","Praktikum & Praxis","Praxisaufträge, Beobachtungen und Reflexionen verbinden Schule und Praktikumsbetrieb.",`<button class="primary" onclick="openPracticeForm()">＋ Praxisauftrag</button>`)}
+ <div class="grid grid-2">${data.map(p=>`<div class="card"><span class="pill ${p.state==="offen"?"orange":"green"}">${esc(p.state||"geplant")}</span><h3>${esc(p.title)}</h3><p>${esc(p.text)}</p><small style="display:block;color:var(--muted);margin-top:9px">${esc(p.date||"")}</small></div>`).join("")||`<div class="empty">Noch keine Praxisaufträge.</div>`}</div>
+ <div class="card" style="margin-top:12px"><h3>🤝 Praxispartner</h3><p>Praktikum ist Lern- und Innovationsraum: Beobachtungen aus der Praxis können zu Fragen, Projekten und KI-Innovationspartnerschaften werden.</p></div>${footer()}`;
 }
 async function renderKI(){
- return `${pageHead("INNOVATION","KI-Innovationslabor","KI verantwortungsvoll erproben und gemeinsam mit Praxispartnern LÃ¶sungen entwickeln.",`<button class="primary" onclick="openPostForm('idea')">ï¼‹ KI-Idee</button>`)}
- <div class="grid grid-3">${[["ðŸ”","KI beobachten","Welche Aufgabe in der Praxis kÃ¶nnte durch KI unterstÃ¼tzt werden?"],["ðŸ§ª","KI erproben","Eine kleine Idee mit klarer Fragestellung ausprobieren."],["ðŸ¤","Innovationspartnerschaft","Ergebnis gemeinsam mit dem Praxispartner prÃ¼fen und weiterentwickeln."]].map(x=>`<div class="card tile"><span class="emoji">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></div>`).join("")}</div>
- <div class="card" style="margin-top:12px"><h3>âš–ï¸ KI-Kompass</h3><div class="chips" style="margin-top:9px"><span class="chip">Transparenz</span><span class="chip">Datenschutz</span><span class="chip">Quellen prÃ¼fen</span><span class="chip">Eigenleistung</span><span class="chip">Bias reflektieren</span><span class="chip">Ergebnisse validieren</span></div></div>${footer()}`;
+ return `${pageHead("INNOVATION","KI-Innovationslabor","KI verantwortungsvoll erproben und gemeinsam mit Praxispartnern Lösungen entwickeln.",`<button class="primary" onclick="openPostForm('idea')">＋ KI-Idee</button>`)}
+ <div class="grid grid-3">${[["🔍","KI beobachten","Welche Aufgabe in der Praxis könnte durch KI unterstützt werden?"],["🧪","KI erproben","Eine kleine Idee mit klarer Fragestellung ausprobieren."],["🤝","Innovationspartnerschaft","Ergebnis gemeinsam mit dem Praxispartner prüfen und weiterentwickeln."]].map(x=>`<div class="card tile"><span class="emoji">${x[0]}</span><strong>${x[1]}</strong><small>${x[2]}</small></div>`).join("")}</div>
+ <div class="card" style="margin-top:12px"><h3>⚖️ KI-Kompass</h3><div class="chips" style="margin-top:9px"><span class="chip">Transparenz</span><span class="chip">Datenschutz</span><span class="chip">Quellen prüfen</span><span class="chip">Eigenleistung</span><span class="chip">Bias reflektieren</span><span class="chip">Ergebnisse validieren</span></div></div>${footer()}`;
 }
 async function renderKalender(){
  const data=await getCollection("calendar","date",false);
- return `${pageHead("ORGANISATION","Campus-Kalender","Gemeinsame Termine, Meilensteine und PrÃ¤sentationen.",`<button class="primary" onclick="openCalendarForm()">ï¼‹ Termin</button>`)}
+ return `${pageHead("ORGANISATION","Campus-Kalender","Gemeinsame Termine, Meilensteine und Präsentationen.",`<button class="primary" onclick="openCalendarForm()">＋ Termin</button>`)}
  <div class="list">${data.map(c=>`<div class="list-item"><div><strong>${esc(c.title)}</strong><small>${esc(c.date||"")}</small></div><span class="pill green">Termin</span></div>`).join("")||`<div class="empty">Noch keine Termine.</div>`}</div>${footer()}`;
 }
 async function renderTeam(){
  const tasks=await getCollection("tasks","deadline",false);
- return `${pageHead("TEAM & SCHULENTWICKLUNG","Team & SQ","Arbeitsorganisation fÃ¼r die Campusklasse und gemeinsame Schulentwicklung.",`<button class="primary" onclick="openTaskForm()">ï¼‹ Arbeitspaket</button>`)}
+ return `${pageHead("TEAM & SCHULENTWICKLUNG","Team & SQ","Arbeitsorganisation für die Campusklasse und gemeinsame Schulentwicklung.",`<button class="primary" onclick="openTaskForm()">＋ Arbeitspaket</button>`)}
  <div class="grid grid-3">${["green","yellow","red"].map((s,i)=>`<div class="card"><div class="status-card">${statusDot(s)}<div><h3>${statusLabel[s]}</h3><p>${tasks.filter(t=>t.status===s).length} Arbeitspakete</p></div></div></div>`).join("")}</div>
- <div class="card" style="margin-top:12px"><h3>ðŸ“‹ Arbeitspakete</h3><div class="list">${tasks.map(taskHTML).join("")||`<div class="empty">Noch keine Arbeitspakete.</div>`}</div></div>
- <div class="notice" style="margin-top:12px"><b>Ampel:</b> <b>Auf Kurs</b> = planmÃ¤ÃŸig Â· <b>KlÃ¤rungsbedarf</b> = Abstimmung/Entscheidung nÃ¶tig Â· <b>Handlungsbedarf</b> = aktives Eingreifen erforderlich.</div>${footer()}`;
+ <div class="card" style="margin-top:12px"><h3>📋 Arbeitspakete</h3><div class="list">${tasks.map(taskHTML).join("")||`<div class="empty">Noch keine Arbeitspakete.</div>`}</div></div>
+ <div class="notice" style="margin-top:12px"><b>Ampel:</b> <b>Auf Kurs</b> = planmäßig · <b>Klärungsbedarf</b> = Abstimmung/Entscheidung nötig · <b>Handlungsbedarf</b> = aktives Eingreifen erforderlich.</div>${footer()}`;
 }
 
 async function renderLernmethoden(){
@@ -312,7 +312,7 @@ async function renderLernmethoden(){
     return await m.renderLernmethoden();
   }catch(e){
     console.error("Lernmethoden:",e);
-    return moduleError("ðŸ§° Lernmethoden","modules/lernmethoden.js",e);
+    return moduleError("🧰 Lernmethoden","modules/lernmethoden.js",e);
   }
 }
 
@@ -321,56 +321,56 @@ async function renderLerncoaching(){
   const subject=encodeURIComponent("Anfrage Lerncoaching");
   const body=encodeURIComponent(
     "Hallo,\n\n" +
-    "ich wÃ¼rde gerne ein Lerncoaching vereinbaren.\n\n" +
+    "ich würde gerne ein Lerncoaching vereinbaren.\n\n" +
     "Mein Anliegen:\n\n\n" +
-    "Viele GrÃ¼ÃŸe"
+    "Viele Grüße"
   );
   const mail=`mailto:${email}?subject=${subject}&body=${body}`;
 
   return `${pageHead(
     "BEGLEITUNG",
     "Lerncoaching",
-    "Gemeinsam den eigenen Lernweg klÃ¤ren, Ziele entwickeln und nÃ¤chste Schritte finden.",
-    `<a class="primary" href="${mail}">âœ‰ï¸ Lerncoaching anfragen</a>`
+    "Gemeinsam den eigenen Lernweg klären, Ziele entwickeln und nächste Schritte finden.",
+    `<a class="primary" href="${mail}">✉️ Lerncoaching anfragen</a>`
   )}
   <div class="grid grid-2">
     <div class="card">
-      <span class="badge">ðŸ§­ INDIVIDUELLE BEGLEITUNG</span>
+      <span class="badge">🧭 INDIVIDUELLE BEGLEITUNG</span>
       <h2>Du musst deinen Lernweg nicht allein planen.</h2>
-      <p>Im Lerncoaching kannst du gemeinsam mit einer Lehrkraft auf deine aktuelle Lernsituation schauen, Ziele klÃ¤ren und einen passenden nÃ¤chsten Schritt entwickeln.</p>
-      <h3>Ein Lerncoaching kann helfen, wenn du â€¦</h3>
+      <p>Im Lerncoaching kannst du gemeinsam mit einer Lehrkraft auf deine aktuelle Lernsituation schauen, Ziele klären und einen passenden nächsten Schritt entwickeln.</p>
+      <h3>Ein Lerncoaching kann helfen, wenn du …</h3>
       <div class="list">
-        <div class="list-item"><strong>ðŸŽ¯ ein Lernziel klÃ¤ren mÃ¶chtest</strong><span class="pill">Ziel</span></div>
-        <div class="list-item"><strong>ðŸ“š deinen Lernweg planen mÃ¶chtest</strong><span class="pill">Planung</span></div>
-        <div class="list-item"><strong>ðŸ§© bei einer Lernaufgabe feststeckst</strong><span class="pill">KlÃ¤ren</span></div>
-        <div class="list-item"><strong>ðŸ’ª mehr Struktur oder Motivation suchst</strong><span class="pill">StÃ¤rkung</span></div>
-        <div class="list-item"><strong>ðŸš€ deinen nÃ¤chsten Lernschritt finden mÃ¶chtest</strong><span class="pill">NÃ¤chster Schritt</span></div>
+        <div class="list-item"><strong>🎯 ein Lernziel klären möchtest</strong><span class="pill">Ziel</span></div>
+        <div class="list-item"><strong>📚 deinen Lernweg planen möchtest</strong><span class="pill">Planung</span></div>
+        <div class="list-item"><strong>🧩 bei einer Lernaufgabe feststeckst</strong><span class="pill">Klären</span></div>
+        <div class="list-item"><strong>💪 mehr Struktur oder Motivation suchst</strong><span class="pill">Stärkung</span></div>
+        <div class="list-item"><strong>🚀 deinen nächsten Lernschritt finden möchtest</strong><span class="pill">Nächster Schritt</span></div>
       </div>
     </div>
     <div class="card">
-      <span class="badge">âœ‰ï¸ KONTAKT</span>
+      <span class="badge">✉️ KONTAKT</span>
       <h2>Eine Lehrkraft anschreiben</h2>
-      <p>Du mÃ¶chtest ein Lerncoaching? Dann kannst du direkt eine E-Mail an die zustÃ¤ndige Lehrkraft schreiben.</p>
-      <a class="primary" href="${mail}">âœ‰ï¸ E-Mail an Lerncoaching</a>
+      <p>Du möchtest ein Lerncoaching? Dann kannst du direkt eine E-Mail an die zuständige Lehrkraft schreiben.</p>
+      <a class="primary" href="${mail}">✉️ E-Mail an Lerncoaching</a>
       <div class="notice" style="margin-top:16px">
         <strong>Du musst dein Anliegen nicht perfekt formulieren.</strong>
-        <p style="margin-bottom:0">Schreibe einfach kurz, wobei du UnterstÃ¼tzung mÃ¶chtest.</p>
+        <p style="margin-bottom:0">Schreibe einfach kurz, wobei du Unterstützung möchtest.</p>
       </div>
     </div>
   </div>
   <div class="card" style="margin-top:12px">
-    <h3>ðŸ§­ So kann ein Lerncoaching ablaufen</h3>
+    <h3>🧭 So kann ein Lerncoaching ablaufen</h3>
     <div class="lp-flow">
-      <span>1. Anliegen klÃ¤ren</span><b>â†’</b>
-      <span>2. Situation anschauen</span><b>â†’</b>
-      <span>3. Ziel formulieren</span><b>â†’</b>
-      <span>4. nÃ¤chsten Schritt planen</span>
+      <span>1. Anliegen klären</span><b>→</b>
+      <span>2. Situation anschauen</span><b>→</b>
+      <span>3. Ziel formulieren</span><b>→</b>
+      <span>4. nächsten Schritt planen</span>
     </div>
   </div>
   <div class="card" style="margin-top:12px">
-    <h3>ðŸ’¡ Wichtig</h3>
-    <p>Du musst fÃ¼r ein Lerncoaching noch keine fertige LÃ¶sung haben. Gemeinsam wird sortiert, was gerade wichtig ist und welcher nÃ¤chste Schritt sinnvoll sein kann.</p>
-    <p>Die Kontaktaufnahme erfolgt ausschlieÃŸlich per E-Mail.</p>
+    <h3>💡 Wichtig</h3>
+    <p>Du musst für ein Lerncoaching noch keine fertige Lösung haben. Gemeinsam wird sortiert, was gerade wichtig ist und welcher nächste Schritt sinnvoll sein kann.</p>
+    <p>Die Kontaktaufnahme erfolgt ausschließlich per E-Mail.</p>
   </div>
   ${footer()}`;
 }
@@ -393,9 +393,9 @@ async function render(){
     kalender:renderKalender,
     team:renderTeam,
     impulse:()=>modulePlaceholder("💡 Lernimpulse"),
-    lernstand:()=>modulePlaceholder("ðŸ“Š Lernstandsmessung"),
-    resilienz:()=>modulePlaceholder("ðŸŒ± Resilienz & Respressi"),
-    kompetenzprofil:()=>modulePlaceholder("ðŸŽ¯ Kompetenzprofil"),
+    lernstand:()=>modulePlaceholder("📊 Lernstandsmessung"),
+    resilienz:()=>modulePlaceholder("🌱 Resilienz & Respressi"),
+    kompetenzprofil:()=>modulePlaceholder("🎯 Kompetenzprofil"),
     methoden:renderLernmethoden,
     lerncoaching:renderLerncoaching};
   const fn=pages[p]||renderStart;
@@ -409,17 +409,17 @@ async function render(){
   $("sidebar").classList.remove("open");
 }
 function modulePlaceholder(title){
-  return `${pageHead("CAMPUS-MODUL",title,"Dieser Bereich ist in der Master-Struktur vorbereitet.",`<button class="secondary" onclick="go('start')">â† Startseite</button>`)}
-  <div class="card"><span class="badge">ðŸ§© VORBEREITET</span><h2>${title}</h2><p>Dieser Bereich wird spÃ¤ter als eigenes Modul entwickelt. Die Ã¼brige Campus-App bleibt dabei unverÃ¤ndert.</p></div>${footer()}`;
+  return `${pageHead("CAMPUS-MODUL",title,"Dieser Bereich ist in der Master-Struktur vorbereitet.",`<button class="secondary" onclick="go('start')">← Startseite</button>`)}
+  <div class="card"><span class="badge">🧩 VORBEREITET</span><h2>${title}</h2><p>Dieser Bereich wird später als eigenes Modul entwickelt. Die übrige Campus-App bleibt dabei unverändert.</p></div>${footer()}`;
 }
 
 
 /* =========================================================
-   CAMPUSKLASSE â€“ MODAL BRIDGE
+   CAMPUSKLASSE – MODAL BRIDGE
    app.js wird als ES-Modul geladen. Funktionen aus einem
    ES-Modul sind nicht automatisch window-global.
    Die bestehenden Modal-Formulare verwenden jedoch inline
-   onclick="...". Deshalb werden die benÃ¶tigten Aktionen
+   onclick="...". Deshalb werden die benötigten Aktionen
    hier explizit nach window exportiert.
    ========================================================= */
 window.__CampusModalBridgeInstalled=true;
@@ -446,7 +446,7 @@ window.openTaskForm=openTaskForm;
 
 
 /* CAMPUS MODULE BRIDGE
-   ES-Module erhalten die gemeinsamen Render-Helfer Ã¼ber window.
+   ES-Module erhalten die gemeinsamen Render-Helfer über window.
 */
 window.__CampusModuleBridge=true;
 window.CampusFirebase=window.CampusFirebase||{};
@@ -459,37 +459,37 @@ window.addEventListener("hashchange",render);
 window.go=p=>{location.hash=p};
 
 function openTaskForm(){
- modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">CAMPUS-KOMPASS</div><h2>Neue Aufgabe</h2><div class="form"><label>Aufgabe<input id="fTitle" placeholder="Was soll erledigt werden?" required></label><label>Verantwortlich<input id="fOwner" placeholder="Name"></label><label>Deadline<input id="fDeadline" type="date"></label><label>Status<select id="fStatus"><option value="green">Auf Kurs</option><option value="yellow">KlÃ¤rungsbedarf</option><option value="red">Handlungsbedarf</option></select></label><label>NÃ¤chste Schritte<textarea id="fNext" rows="3"></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addTask()">Speichern</button></div></div>`);
+ modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">CAMPUS-KOMPASS</div><h2>Neue Aufgabe</h2><div class="form"><label>Aufgabe<input id="fTitle" placeholder="Was soll erledigt werden?" required></label><label>Verantwortlich<input id="fOwner" placeholder="Name"></label><label>Deadline<input id="fDeadline" type="date"></label><label>Status<select id="fStatus"><option value="green">Auf Kurs</option><option value="yellow">Klärungsbedarf</option><option value="red">Handlungsbedarf</option></select></label><label>Nächste Schritte<textarea id="fNext" rows="3"></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addTask()">Speichern</button></div></div>`);
 }
 async function addTask(){
- try{await addDoc(collection(db,"tasks"),{title:$("fTitle").value.trim()||"Neue Aufgabe",ownerName:$("fOwner").value.trim()||profile.displayName,ownerUid:currentUser.uid,deadline:cleanDateInput($("fDeadline").value),status:$("fStatus").value,next:$("fNext").value.trim()||"NÃ¤chsten Schritt festlegen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Aufgabe gespeichert.")}catch(e){toast("Speichern nicht mÃ¶glich.");console.error(e)}
+ try{await addDoc(collection(db,"tasks"),{title:$("fTitle").value.trim()||"Neue Aufgabe",ownerName:$("fOwner").value.trim()||profile.displayName,ownerUid:currentUser.uid,deadline:cleanDateInput($("fDeadline").value),status:$("fStatus").value,next:$("fNext").value.trim()||"Nächsten Schritt festlegen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Aufgabe gespeichert.")}catch(e){toast("Speichern nicht möglich.");console.error(e)}
 }
 function openPostForm(defaultType="question"){
- modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">CAMPUS-FORUM</div><h2>Beitrag schreiben</h2><div class="form"><label>Kategorie<select id="pType"><option value="question" ${defaultType==="question"?"selected":""}>â“ Frage</option><option value="info" ${defaultType==="info"?"selected":""}>ðŸ“¢ Info</option><option value="idea" ${defaultType==="idea"?"selected":""}>ðŸ’¡ Idee</option><option value="project">ðŸš€ Projekt</option><option value="practice">ðŸ¢ Praxis</option></select></label><label>Beitrag<textarea id="pText" rows="5" placeholder="Was mÃ¶chtest du teilen?" required></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addPost()">VerÃ¶ffentlichen</button></div></div>`);
+ modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">CAMPUS-FORUM</div><h2>Beitrag schreiben</h2><div class="form"><label>Kategorie<select id="pType"><option value="question" ${defaultType==="question"?"selected":""}>❓ Frage</option><option value="info" ${defaultType==="info"?"selected":""}>📢 Info</option><option value="idea" ${defaultType==="idea"?"selected":""}>💡 Idee</option><option value="project">🚀 Projekt</option><option value="practice">🏢 Praxis</option></select></label><label>Beitrag<textarea id="pText" rows="5" placeholder="Was möchtest du teilen?" required></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addPost()">Veröffentlichen</button></div></div>`);
 }
 async function addPost(){
  const text=$("pText").value.trim();if(!text){toast("Bitte Beitrag eingeben.");return}
- try{await addDoc(collection(db,"posts"),{authorUid:currentUser.uid,authorName:profile.displayName,type:$("pType").value,text,likes:0,comments:[],createdAt:serverTimestamp()});closeModal();await render();toast("Beitrag verÃ¶ffentlicht.")}catch(e){toast("Beitrag konnte nicht gespeichert werden.");console.error(e)}
+ try{await addDoc(collection(db,"posts"),{authorUid:currentUser.uid,authorName:profile.displayName,type:$("pType").value,text,likes:0,comments:[],createdAt:serverTimestamp()});closeModal();await render();toast("Beitrag veröffentlicht.")}catch(e){toast("Beitrag konnte nicht gespeichert werden.");console.error(e)}
 }
-async function likePost(id){try{await updateDoc(doc(db,"posts",id),{likes:increment(1)}) ;await render()}catch(e){toast("Aktion nicht mÃ¶glich.")}}
+async function likePost(id){try{await updateDoc(doc(db,"posts",id),{likes:increment(1)}) ;await render()}catch(e){toast("Aktion nicht möglich.")}}
 async function commentPost(id){
  const input=$("comment-"+id), text=input.value.trim();if(!text)return;
  try{await updateDoc(doc(db,"posts",id),{comments:arrayUnion({uid:currentUser.uid,name:profile.displayName,text,createdAt:new Date().toISOString()})});await render()}catch(e){toast("Antwort konnte nicht gespeichert werden.")}
 }
 function focusComment(id){setTimeout(()=>{const e=$("comment-"+id);if(e){e.focus();e.scrollIntoView({behavior:"smooth",block:"center"});}},80)}
-async function deletePost(id){if(!confirm("Beitrag wirklich lÃ¶schen?"))return;try{await deleteDoc(doc(db,"posts",id));await render()}catch(e){toast("LÃ¶schen nicht erlaubt.")}}
+async function deletePost(id){if(!confirm("Beitrag wirklich löschen?"))return;try{await deleteDoc(doc(db,"posts",id));await render()}catch(e){toast("Löschen nicht erlaubt.")}}
 function openHelpForm(){openPostForm("idea")}
 function openProjectForm(){
- modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">PROJEKTE</div><h2>Projekt anlegen</h2><div class="form"><label>Projektname<input id="xTitle"></label><label>Team<input id="xTeam"></label><label>Praxispartner<input id="xPartner"></label><label>Ziel<textarea id="xGoal" rows="3"></textarea></label><label>Fortschritt (0â€“100)<input id="xProgress" type="number" min="0" max="100" value="0"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addProject()">Speichern</button></div></div>`);
+ modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">PROJEKTE</div><h2>Projekt anlegen</h2><div class="form"><label>Projektname<input id="xTitle"></label><label>Team<input id="xTeam"></label><label>Praxispartner<input id="xPartner"></label><label>Ziel<textarea id="xGoal" rows="3"></textarea></label><label>Fortschritt (0–100)<input id="xProgress" type="number" min="0" max="100" value="0"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addProject()">Speichern</button></div></div>`);
 }
-async function addProject(){try{await addDoc(collection(db,"projects"),{title:$("xTitle").value.trim()||"Neues Projekt",team:$("xTeam").value.trim()||"Team",partner:$("xPartner").value.trim()||"â€”",progress:Math.max(0,Math.min(100,Number($("xProgress").value)||0)),status:"green",goal:$("xGoal").value.trim()||"Ziel ergÃ¤nzen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Projekt angelegt.")}catch(e){toast("Projekt konnte nicht angelegt werden.")}}
-function openJournalForm(){modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">LERNJOURNAL</div><h2>Neuer Reflexionseintrag</h2><div class="form"><label>Titel<input id="jTitle"></label><label>Reflexion<textarea id="jText" rows="5"></textarea></label><label>Stimmung<select id="jMood"><option>ðŸ™‚</option><option>ðŸ˜ƒ</option><option>ðŸ¤”</option><option>ðŸ˜</option><option>ðŸ˜•</option></select></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addJournal()">Speichern</button></div></div>`)}
-async function addJournal(){try{await addDoc(collection(db,"journal"),{uid:currentUser.uid,title:$("jTitle").value.trim()||"Reflexion",text:$("jText").value.trim()||"â€”",mood:$("jMood").value,createdAt:serverTimestamp()});closeModal();await render();toast("Journal gespeichert.")}catch(e){toast("Journal konnte nicht gespeichert werden.")}}
-function openCompetenceForm(){modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">KOMPETENZWERKSTATT</div><h2>Kompetenz ergÃ¤nzen</h2><div class="form"><label>Kompetenz<input id="cName"></label><label>Aktueller Stand (0â€“10)<input id="cValue" type="number" min="0" max="10" value="5"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addCompetence()">Speichern</button></div></div>`)}
+async function addProject(){try{await addDoc(collection(db,"projects"),{title:$("xTitle").value.trim()||"Neues Projekt",team:$("xTeam").value.trim()||"Team",partner:$("xPartner").value.trim()||"—",progress:Math.max(0,Math.min(100,Number($("xProgress").value)||0)),status:"green",goal:$("xGoal").value.trim()||"Ziel ergänzen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Projekt angelegt.")}catch(e){toast("Projekt konnte nicht angelegt werden.")}}
+function openJournalForm(){modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">LERNJOURNAL</div><h2>Neuer Reflexionseintrag</h2><div class="form"><label>Titel<input id="jTitle"></label><label>Reflexion<textarea id="jText" rows="5"></textarea></label><label>Stimmung<select id="jMood"><option>🙂</option><option>😃</option><option>🤔</option><option>😐</option><option>😕</option></select></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addJournal()">Speichern</button></div></div>`)}
+async function addJournal(){try{await addDoc(collection(db,"journal"),{uid:currentUser.uid,title:$("jTitle").value.trim()||"Reflexion",text:$("jText").value.trim()||"—",mood:$("jMood").value,createdAt:serverTimestamp()});closeModal();await render();toast("Journal gespeichert.")}catch(e){toast("Journal konnte nicht gespeichert werden.")}}
+function openCompetenceForm(){modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">KOMPETENZWERKSTATT</div><h2>Kompetenz ergänzen</h2><div class="form"><label>Kompetenz<input id="cName"></label><label>Aktueller Stand (0–10)<input id="cValue" type="number" min="0" max="10" value="5"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addCompetence()">Speichern</button></div></div>`)}
 async function addCompetence(){try{await addDoc(collection(db,"competencies"),{uid:currentUser.uid,name:$("cName").value.trim()||"Neue Kompetenz",value:Math.max(0,Math.min(10,Number($("cValue").value)||0)),createdAt:serverTimestamp()});closeModal();await render();toast("Kompetenz gespeichert.")}catch(e){toast("Kompetenz konnte nicht gespeichert werden.")}}
-function openPracticeForm(){modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">PRAXIS</div><h2>Praxisauftrag</h2><div class="form"><label>Titel<input id="rTitle"></label><label>Datum<input id="rDate" type="date"></label><label>Beschreibung<textarea id="rText" rows="4"></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addPractice()">Speichern</button></div></div>`)}
-async function addPractice(){try{await addDoc(collection(db,"practice"),{title:$("rTitle").value.trim()||"Praxisauftrag",date:cleanDateInput($("rDate").value),state:"offen",text:$("rText").value.trim()||"Beschreibung ergÃ¤nzen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Praxisauftrag gespeichert.")}catch(e){toast("Praxisauftrag konnte nicht gespeichert werden.")}}
-function openCalendarForm(){modal(`<button class="modal-close" onclick="closeModal()">Ã—</button><div class="kicker">CAMPUS-KALENDER</div><h2>Termin ergÃ¤nzen</h2><div class="form"><label>Titel<input id="calTitle"></label><label>Datum<input id="calDate" type="date"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addCalendar()">Speichern</button></div></div>`)}
+function openPracticeForm(){modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">PRAXIS</div><h2>Praxisauftrag</h2><div class="form"><label>Titel<input id="rTitle"></label><label>Datum<input id="rDate" type="date"></label><label>Beschreibung<textarea id="rText" rows="4"></textarea></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addPractice()">Speichern</button></div></div>`)}
+async function addPractice(){try{await addDoc(collection(db,"practice"),{title:$("rTitle").value.trim()||"Praxisauftrag",date:cleanDateInput($("rDate").value),state:"offen",text:$("rText").value.trim()||"Beschreibung ergänzen",createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Praxisauftrag gespeichert.")}catch(e){toast("Praxisauftrag konnte nicht gespeichert werden.")}}
+function openCalendarForm(){modal(`<button class="modal-close" onclick="closeModal()">×</button><div class="kicker">CAMPUS-KALENDER</div><h2>Termin ergänzen</h2><div class="form"><label>Titel<input id="calTitle"></label><label>Datum<input id="calDate" type="date"></label><div class="form-actions"><button class="secondary" onclick="closeModal()">Abbrechen</button><button class="primary" onclick="addCalendar()">Speichern</button></div></div>`)}
 async function addCalendar(){try{await addDoc(collection(db,"calendar"),{title:$("calTitle").value.trim()||"Termin",date:cleanDateInput($("calDate").value),createdBy:currentUser.uid,createdAt:serverTimestamp()});closeModal();await render();toast("Termin gespeichert.")}catch(e){toast("Termin konnte nicht gespeichert werden.")}}
 
 async function init(){
@@ -510,6 +510,7 @@ async function init(){
   }catch(e){
     console.error("Firebase konnte nicht geladen werden:",e);
     showAuth();
-    $("authError").textContent="Firebase konnte nicht geladen werden. Der Reiter â€žKonto erstellenâ€œ sollte trotzdem funktionieren.";
+    $("authError").textContent="Firebase konnte nicht geladen werden. Der Reiter „Konto erstellen“ sollte trotzdem funktionieren.";
   }
 }
+init();
