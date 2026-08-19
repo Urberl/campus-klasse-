@@ -634,7 +634,233 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
 
   .lj-motivation p {
     font-size: 16px;
+  }/* =========================================================
+   CAMPUSKLASSE – KOMPETENZNETZWERK
+   ========================================================= */
+
+.competency-hero {
+  align-items: center;
+  background: linear-gradient(110deg, #ffffff, #f4fbff);
+}
+
+.competency-hero h1 {
+  margin-bottom: 10px;
+}
+
+.competency-motto {
+  flex: 0 0 310px;
+  background: #f1f8ec;
+  border: 1px solid #dcebd5;
+  border-radius: 14px;
+  padding: 22px;
+  text-align: center;
+  color: #4d742e;
+  line-height: 1.5;
+  font-size: 17px;
+}
+
+.competency-stats {
+  margin-bottom: 12px;
+}
+
+.competency-stats .stat {
+  min-height: 95px;
+  justify-content: center;
+}
+
+.competency-card {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-height: 230px;
+}
+
+.competency-card-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.competency-card-head strong {
+  display: block;
+  color: var(--blue-dark);
+  font-size: 14px;
+}
+
+.competency-card-head small {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.competency-avatar {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #eaf5fb;
+  color: var(--blue-dark);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.competency-level {
+  color: var(--green);
+  letter-spacing: 2px;
+  font-size: 13px;
+  margin: 2px 0;
+}
+
+.competency-card p {
+  color: #526b7a;
+  font-size: 11px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.competency-help {
+  margin-top: auto;
+  background: #f1f8ec;
+  border-color: #dcebd5;
+  color: #4d742e;
+}
+
+.competency-help strong {
+  color: #4d742e;
+}
+
+.competency-help p {
+  color: #5c7062;
+  margin-top: 4px;
+}
+
+.competency-no-help {
+  margin-top: auto;
+  color: var(--muted);
+  font-size: 10px;
+  background: #f7fafc;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.competency-contact {
+  width: 100%;
+  margin-top: 3px;
+}
+
+.competency-owner-actions {
+  margin-top: auto;
+}
+
+.competency-toolbar {
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 4px 0 8px;
+}
+
+.competency-toolbar .search {
+  flex: 1;
+  min-width: 220px;
+  max-width: 420px;
+}
+
+.competency-toolbar select {
+  border: 1px solid #d6e2ea;
+  border-radius: 8px;
+  padding: 11px 12px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+}
+
+.competency-toolbar select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(22,136,207,.1);
+}
+
+.competency-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.competency-check input {
+  margin: 0;
+}
+
+.competency-category-chips {
+  margin-top: 10px;
+}
+
+.competency-card[hidden] {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 850px) {
+
+  .competency-motto {
+    flex: 1;
+    width: 100%;
   }
+
+  .competency-toolbar {
+    align-items: stretch;
+  }
+
+  .competency-toolbar .search {
+    max-width: none;
+    width: 100%;
+  }
+
+  .competency-toolbar select {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .competency-hero {
+    padding: 20px;
+  }
+
+  .competency-hero h1 {
+    font-size: 28px;
+  }
+
+  .competency-motto {
+    font-size: 15px;
+    padding: 17px;
+  }
+
+  .competency-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .competency-card {
+    min-height: auto;
+  }
+
+  .competency-toolbar {
+    flex-direction: column;
+  }
+
+  .competency-check {
+    padding: 5px 0;
+  }
+
+}
 
 }
 }
