@@ -208,7 +208,8 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
   margin-top: auto;
   width: 100%;
 }/* =========================================================
-   LERNCOACHING
+  /* =========================================================
+   LERNCOACHING – Zusatz
    ========================================================= */
 
 .lp-flow {
@@ -216,31 +217,50 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
   flex-wrap: wrap;
   align-items: center;
   gap: 9px;
+  margin-top: 12px;
 }
 
 .lp-flow span {
   background: var(--bg);
   border: 1px solid var(--line);
   border-radius: 999px;
-  padding: 8px 11px;
+  padding: 8px 12px;
   font-size: 13px;
   font-weight: 700;
 }
 
 .lp-flow b {
   color: var(--muted);
+  font-size: 16px;
 }
 
+/* E-Mail-Kontakt */
+.lerncoaching-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Mobile Darstellung */
 @media (max-width: 700px) {
+
   .lp-flow {
     display: grid;
     grid-template-columns: 1fr;
+    gap: 6px;
   }
 
   .lp-flow b {
     text-align: center;
     transform: rotate(90deg);
   }
+
+  .lerncoaching-email {
+    width: 100%;
+    justify-content: center;
+  }
+}}
 }/* =========================================================
    LERNMETHODEN
    ========================================================= */
