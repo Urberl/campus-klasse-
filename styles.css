@@ -858,7 +858,299 @@ main#content{flex:1;min-width:0;padding:28px 34px 60px;max-width:1500px}
 
   .competency-check {
     padding: 5px 0;
+  }/* =========================================================
+   CAMPUSKLASSE – LERNJOURNAL
+   Neue Darstellung: Erstellen + Bibliothek
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   BEREICH: NEUEN EINTRAG ERSTELLEN
+   --------------------------------------------------------- */
+
+.journal-create-card {
+  margin-top: 16px;
+}
+
+.journal-create-card .kicker {
+  margin-bottom: 4px;
+}
+
+.journal-create-card h2 {
+  margin: 6px 0 6px;
+  color: var(--blue-dark);
+}
+
+.journal-create-card p {
+  color: var(--muted);
+  margin: 0 0 16px;
+  line-height: 1.5;
+}
+
+
+/* ---------------------------------------------------------
+   BEREICH: LERNJOURNAL-BIBLIOTHEK
+   --------------------------------------------------------- */
+
+.journal-library-card {
+  margin-top: 18px;
+}
+
+.journal-library-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.journal-library-toolbar h2 {
+  margin: 6px 0 3px;
+  color: var(--blue-dark);
+}
+
+.journal-library-toolbar p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+
+/* ---------------------------------------------------------
+   LISTE
+   --------------------------------------------------------- */
+
+.journal-list {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--white);
+}
+
+
+/* Kopfzeile */
+
+.journal-list-header {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr) 90px;
+  align-items: center;
+  gap: 14px;
+
+  padding: 11px 15px;
+
+  background: #f3f6f4;
+  color: var(--muted);
+
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: .08em;
+}
+
+
+/* einzelne Zeile */
+
+.journal-list-item {
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr) 90px;
+  align-items: center;
+  gap: 14px;
+
+  min-height: 58px;
+  padding: 8px 10px 8px 15px;
+
+  border-top: 1px solid #e7ebe9;
+  background: #fff;
+}
+
+
+/* Klickbarer Bereich Datum + Titel */
+
+.journal-list-open {
+  width: 100%;
+
+  display: grid;
+  grid-template-columns: 145px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+
+  border: 0;
+  background: transparent;
+
+  padding: 7px 0;
+
+  text-align: left;
+  cursor: pointer;
+
+  font: inherit;
+  color: inherit;
+}
+
+.journal-list-open:hover {
+  background: #f8fbfd;
+}
+
+.journal-list-open:hover .journal-list-title {
+  color: var(--blue);
+}
+
+
+/* Datum */
+
+.journal-list-date {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+
+/* Titel */
+
+.journal-list-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #27495d;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+/* PDF-Button */
+
+.journal-list-pdf {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------
+   LEERE BIBLIOTHEK
+   --------------------------------------------------------- */
+
+.journal-empty {
+  padding: 30px 18px;
+
+  text-align: center;
+
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.journal-empty strong {
+  display: block;
+
+  color: #476477;
+
+  margin-bottom: 5px;
+}
+
+
+/* ---------------------------------------------------------
+   EINZELNER EINTRAG
+   --------------------------------------------------------- */
+
+.journal-entry-full {
+  margin-top: 16px;
+
+  padding: 18px;
+
+  background: #f7fafc;
+
+  border: 1px solid var(--line);
+  border-radius: 10px;
+
+  color: #334f61;
+
+  line-height: 1.7;
+}
+
+
+/* ---------------------------------------------------------
+   PDF-BEREICH
+   --------------------------------------------------------- */
+
+.journal-pdf {
+  white-space: nowrap;
+}
+
+
+/* ---------------------------------------------------------
+   TABLET
+   --------------------------------------------------------- */
+
+@media (max-width: 800px) {
+
+  .journal-library-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
   }
+
+  .journal-list-header,
+  .journal-list-item {
+    grid-template-columns: 110px minmax(0, 1fr) 80px;
+    gap: 10px;
+  }
+
+  .journal-list-open {
+    grid-template-columns: 110px minmax(0, 1fr);
+    gap: 10px;
+  }
+
+}
+
+
+/* ---------------------------------------------------------
+   HANDY
+   --------------------------------------------------------- */
+
+@media (max-width: 560px) {
+
+  .journal-create-card {
+    padding: 16px;
+  }
+
+  .journal-library-card {
+    padding: 14px;
+  }
+
+  .journal-list-header {
+    grid-template-columns: 82px minmax(0, 1fr) 62px;
+    gap: 7px;
+
+    padding: 9px 10px;
+
+    font-size: 9px;
+  }
+
+  .journal-list-item {
+    grid-template-columns: 82px minmax(0, 1fr) 62px;
+    gap: 7px;
+
+    padding: 8px 7px 8px 10px;
+  }
+
+  .journal-list-open {
+    grid-template-columns: 1fr;
+    gap: 2px;
+
+    padding: 5px 0;
+  }
+
+  .journal-list-date {
+    font-size: 10px;
+  }
+
+  .journal-list-title {
+    font-size: 12px;
+  }
+
+  .journal-list-pdf {
+    padding: 7px 7px;
+    font-size: 10px;
+  }
+
+}
 
 }
 
