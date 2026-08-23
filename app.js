@@ -1446,7 +1446,7 @@ function openCalendarDay(y,m,d){
 
 async function renderTeam(){
   const tasks=await getCollection("tasks","deadline",false);
-  return `${pageHead("TEAM & SCHULENTWICKLUNG","Team & SQ","Arbeitsorganisation für die Campusklasse und gemeinsame Schulentwicklung.",`<button class="primary" onclick="openTaskForm()">＋ Arbeitspaket</button>`)}
+  return `${pageHead("KLassenteam","Lehrkräfte Klassenteam","Arbeitsorganisation für die Campusklasse.",`<button class="primary" onclick="openTaskForm()">＋ Arbeitspaket</button>`)}
   <div class="grid grid-3">${["green","yellow","red"].map((s,i)=>`<div class="card"><div class="status-card">${statusDot(s)}<div>
 <h3>${statusLabel[s]}</h3><p>${tasks.filter(t=>t.status===s).length} Arbeitspakete</p></div></div></div>`).join("")}</div>
   <div class="card" style="margin-top:12px"><h3>   Arbeitspakete</h3><div class="list">${tasks.map(taskHTML).join("")||`<div
