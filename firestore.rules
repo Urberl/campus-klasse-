@@ -12,11 +12,10 @@ function isApproved() {
     && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
 }
 
-    function isTeacher() {
-      return signedIn()
-        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'admin'];
-    }
+   function isTeacher() {
+  return isApproved()
+    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'admin'];
+}
 
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isTeacher());
