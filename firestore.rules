@@ -22,15 +22,17 @@ function isApproved() {
 
       // New accounts are always students. A student cannot create a teacher account.
       allow create: if signedIn()
-        && request.auth.uid == uid
-        && request.resource.data.role == 'student';
+  && request.auth.uid == uid
+  && request.resource.data.role == 'student'
+  && request.resource.data.status == 'pending';
 
       // Students may update their own profile, but may not change their role.
       // Teachers/admins may manage profiles.
       allow update: if isTeacher()
-        || (signedIn()
-          && request.auth.uid == uid
-          && request.resource.data.role == resource.data.role);
+  || (signedIn()
+      && request.auth.uid == uid
+      && request.resource.data.role == resource.data.role
+      && request.resource.data.status == resource.data.status);
 
       allow delete: if isTeacher();
     }
