@@ -6,6 +6,11 @@ service cloud.firestore {
     function signedIn() {
       return request.auth != null;
     }
+function isApproved() {
+  return signedIn()
+    && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+    && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'approved';
+}
 
     function isTeacher() {
       return signedIn()
