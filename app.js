@@ -81,7 +81,7 @@ async function ensureProfile(user, displayName=""){
   if(!snap.exists()){
     await setDoc(ref,{
       uid:user.uid,email:user.email||"",displayName:displayName||user.displayName||"Campus-Mitglied",
-      role:"student",createdAt:serverTimestamp()
+role:"student",status:"pending",createdAt:serverTimestamp()
     });
   }
   const s=await getDoc(ref);profile=s.data();
