@@ -3999,7 +3999,17 @@ async function init(){
        clearListeners();
        currentUser=user;
        if(!user){profile=null;showAuth();return}
-       try{await ensureProfile(user);showApp()}
+       try{
+  await ensureProfile(user);
+
+  if(!profile || profile.status !== "approved"){
+    showAuth();
+    $("authError").textContent="Dein Konto wurde angelegt, ist aber noch nicht freigeschaltet. Bitte warte auf die Bestätigung durch die Schule.";
+    return;
+  }
+
+  showApp();
+}
        catch(e){console.error(e);showAuth();$("authError").textContent="Benutzerprofil konnte nicht geladen werden."}
     });
   }catch(e){
