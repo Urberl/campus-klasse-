@@ -4002,7 +4002,13 @@ async function init(){
        try{
   await ensureProfile(user);
 
-  if(!profile || profile.status !== "approved"){
+  if(!profile){
+    showAuth();
+    $("authError").textContent="Benutzerprofil konnte nicht geladen werden.";
+    return;
+}
+
+if(profile.status !== "approved"){
     showAuth();
     $("authError").textContent="Dein Konto wurde angelegt, ist aber noch nicht freigeschaltet. Bitte warte auf die Bestätigung durch die Schule.";
     return;
